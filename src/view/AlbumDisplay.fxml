@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="10" prefHeight="640.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PhotoManagerController">
+   <children>
+      <!-- Navigation and Album Info -->
+      <HBox spacing="15">
+         <children>
+            <Button text="Back to Albums" onAction="#handleBack" />
+            <Label fx:id="albumName" text="Album: [Album Name]" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            <Button fx:id="logout" text="Logout" onAction="#handleLogout" />
+         </children>
+      </HBox>
+      <!-- Photo Management -->
+      <HBox spacing="5">
+         <children>
+            <Button fx:id="addPhoto" text="Add Photo" onAction="#addPhoto" />
+            <Button fx:id="deletePhoto" text="Delete Selected Photo" onAction="#deletePhoto" />
+            <Button fx:id="editCaption" text="Edit Caption" onAction="#editCaption" />
+            <TextField fx:id="captionField" promptText="Caption" />
+         </children>
+      </HBox>
+      <!-- Tag Management -->
+      <HBox spacing="5">
+         <children>
+            <Label text="Tags:" />
+            <TextField fx:id="tagField" promptText="Add Tag" />
+            <Button fx:id="addTag" text="Add" onAction="#addTag" />
+            <Button fx:id="removeTag" text="Remove" onAction="#removeSelectedTag" />
+         </children>
+      </HBox>
+      <!-- Photo List/Display -->
+      <ListView fx:id="photoList" VBox.vgrow="ALWAYS" />
+   </children>
+</VBox>
+
