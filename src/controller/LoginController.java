@@ -26,9 +26,9 @@ import model.User;
 /**
  * The login controller takes the data from username field and loads the admin
  * dashboard, stock or user dashboard.
- * 
- * @author Ayush Joshi
- * @author Anil Tilve
+ *
+ * @author Senuri Rupasinghe
+ * @author Isham Khan
  *
  */
 public class LoginController {
