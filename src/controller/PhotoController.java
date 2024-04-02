@@ -29,8 +29,6 @@ import util.CommonFunctions;
  * The Photo Controller allows user to view the enlarged photo helps add/remove
  * tags and displays details relevant to photo.
  * 
- * @author Ayush Joshi
- * @author Anil Tilve
  *
  */
 public class PhotoController {

@@ -26,8 +26,6 @@ import javafx.scene.Node;
  * The Admin Controller manipulates the user list and feeds new updates into the
  * view.
  * 
- * @author Ayush Joshi
- * @author Anil Tilve
  *
  */
 public class AdminController {

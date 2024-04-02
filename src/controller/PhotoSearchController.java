@@ -38,8 +38,6 @@ import java.util.Locale;
  * The Photo Search Controller implements the search functionality and displays
  * the output result to the user.
  * 
- * @author Ayush Joshi
- * @author Anil Tilve
  *
  */
 public class PhotoSearchController {

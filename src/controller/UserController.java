@@ -26,8 +26,6 @@ import util.CommonFunctions;
  * The User Controller allows user to manipulate the albums and view albums as a
  * list. Also give functionality to rename albums and open search scene.
  * 
- * @author Ayush Joshi
- * @author Anil Tilve
  *
  */
 public class UserController {

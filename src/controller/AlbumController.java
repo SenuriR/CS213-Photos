@@ -37,8 +37,6 @@ import util.PhotoCell;
  * the list viewer. There are different functionalities that are implemented for
  * an album on specific photos.
  * 
- * @author Ayush Joshi
- * @author Anil Tilve
  *
  */
 
