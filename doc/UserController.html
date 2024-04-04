@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation of UserController</title>
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+    <script type="text/javascript" src="../../script.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>UserController Class</h1>
+        <p>The UserController class facilitates album management within the application, offering functionalities like viewing, renaming, and deleting albums.</p>
+    </div>
+    
+    <div class="content">
+        <h2>Functional Overview</h2>
+        <p>This controller is integral for the album management aspect of the application, allowing users to interact with their photo albums directly. It handles album creation, deletion, and renaming, besides providing a gateway to album content and search functionalities.</p>
+
+        <h2>Method Summary</h2>
+        <ul>
+            <li>
+                <b>void start(User user, ArrayList&lt;User&gt; users)</b> - Initializes the controller with the current user and their albums.
+            </li>
+            <li>
+                <b>void handleLogOutButton(ActionEvent event)</b> - Handles logout action to return to the login screen.
+            </li>
+            <li>
+                <b>void handleCancelButton()</b> - Confirms cancellation of the current operation.
+            </li>
+            <li>
+                <b>void handleConfirmButton()</b> - Confirms the addition of a new album or renaming of an existing one.
+            </li>
+            <li>
+                <b>void handleAddAlbumButton()</b> - Prepares the interface for adding a new album.
+            </li>
+            <li>
+                <b>void handleOpenAlbumButton(ActionEvent event)</b> - Opens the selected album to view its content.
+            </li>
+            <li>
+                <b>void handleDeleteAlbumButton()</b> - Deletes the selected album after confirmation.
+            </li>
+            <li>
+                <b>void handleRenameButton()</b> - Prepares the interface for renaming the selected album.
+            </li>
+            <li>
+                <b>void handlesearchPhotosButton(ActionEvent event)</b> - Navigates to the photo search interface.
+            </li>
+        </ul>
+
+        <h2>Usage Example</h2>
+        <p>The UserController is primarily used in the main user dashboard, where it manages the user's interaction with their albums. It orchestrates the UI response to user actions such as album creation, deletion, and renaming, enhancing the application's usability.</p>
+    </div>
+
+    <div class="navigation">
+        <a href="../../overview-summary.html">Overview</a> | <a href="../package-summary.html">Package</a> | <a href="../../controller/UserController.html" title="class in controller">View Source</a>
+    </div>
+</body>
+</html>
