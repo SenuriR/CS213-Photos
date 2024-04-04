@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <!-- Detailed documentation for the LoginController class with usage examples -->
+    <meta charset="UTF-8">
+    <title>Detailed LoginController Usage Examples</title>
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+    <script type="text/javascript" src="../../script.js"></script>
+</head>
+<body>
+    <h1>Usage Examples for LoginController</h1>
+    <p>The <code>LoginController</code> orchestrates the initial user interaction with the application by handling login procedures. This document delves into the specifics of how the <code>LoginController</code> operates and provides examples of its usage in various scenarios.</p>
+
+    <h2>Operational Details and Examples</h2>
+    <h3>Starting the Application</h3>
+    <p>The <code>start(Stage stage)</code> method prepares the login view, setting any required parameters or initial states. An example usage could involve setting focus on the username input field:</p>
+    <pre><code>
+public void start(Stage stage) {
+    // Focus on username input field (assuming fx:id="usernameField")
+    usernameField.requestFocus();
+}
+    </code></pre>
+
+    <h3>Authenticating Users</h3>
+    <p>The <code>handleLoginButton(ActionEvent event)</code> method activates upon the login button press, initiating the authentication process. It distinguishes between different user roles and redirects them appropriately:</p>
+    <pre><code>
+public void handleLoginButton(ActionEvent event) {
+    String username = usernameField.getText();
+    // Assume a method validateUser returns a User object or null if not found
+    User user = validateUser(username);
+    if (user != null) {
+        switch (user.getRole()) {
+            case ADMIN:
+                // Load admin dashboard
+                break;
+            case STOCK_USER:
+                // Load stock user dashboard
+                break;
+            default:
+                // Load regular user dashboard
+        }
+    } else {
+        // Handle invalid login attempt
+    }
+}
+    </code></pre>
+
+    <h2>Integrating with the View</h2>
+    <p>Integration with the FXML view is achieved through annotations and event binding. The <code>handleLoginButton</code> is bound to the login button's <code>onAction</code> property, ensuring seamless interaction between the controller and view layers.</p>
+
+    <h2>Handling First-time Setup</h2>
+    <p>In applications requiring initial setup or data creation, the <code>LoginController</code> can serve as the entry point for these operations, ensuring that the necessary prerequisites for application operation are met before any user interaction occurs.</p>
+
+    <h3>See Also:</h3>
+    <ul>
+        <li>User Model Documentation</li>
+        <li>Admin Dashboard Controller Documentation</li>
+        <li>User Dashboard Controller Documentation</li>
+    </ul>
+
+    <!-- Navigation Links -->
+    <div class="navigation">
+        <a href="../../overview-summary.html">Overview</a> |
+        <a href="../package-summary.html">Package</a> |
+        <a href="../../controller/LoginController.html">View Source</a>
+    </div>
+</body>
+</html>
