@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Extended PhotoController Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+    <script type="text/javascript" src="../../script.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>PhotoController Class: In-depth Guide</h1>
+        <p>The <code>PhotoController</code> class facilitates detailed interactions with photos in an album, such as viewing enlarged photos, editing tags, and navigating through photos.</p>
+    </div>
+    
+    <div class="content">
+        <h2>Detailed Method Descriptions</h2>
+        <h3>Initialization and Display</h3>
+        <p><b>void start(ArrayList&lt;User&gt; users, ListView&lt;Photo&gt; photos, User user, Album selectedAlbum)</b></p>
+        <p>Prepares the photo view by loading selected album photos and user information. It sets up the environment for photo manipulation and tagging functionalities.</p>
+        
+        <h3>Photo Navigation</h3>
+        <p><b>void handleSwitchButton(ActionEvent event)</b></p>
+        <p>Based on user interaction, navigates to either the next or previous photo in the album, enabling a seamless photo browsing experience within the album.</p>
+        
+        <h3>Tag Management</h3>
+        <p><b>void handleAddTagButton()</b></p>
+        <p>Activates input fields for the addition of new photo tags, enhancing photo metadata and searchability within the application.</p>
+        
+        <p><b>void handleDeleteTagButton(ActionEvent event)</b></p>
+        <p>Removes an existing tag from the photo, updating the application's data layer to reflect these changes immediately.</p>
+        
+        <p><b>void handleConfirmButton()</b></p>
+        <p>Confirms the addition of a new tag, ensuring no duplicates, and updates the photo's metadata accordingly.</p>
+        
+        <p><b>void handleCancelTagButton(ActionEvent event)</b></p>
+        <p>Aborts the current tagging operation, reverting any unsaved changes made by the user.</p>
+        
+        <h3>Application Navigation</h3>
+        <p><b>void handleBackButton(ActionEvent event)</b></p>
+        <p>Returns the user to the broader album view, maintaining the application's navigational flow and user context.</p>
+        
+        <p><b>void handleLogoutButton(ActionEvent event)</b></p>
+        <p>Secures the application by logging out the current user, ensuring data privacy and security upon user exit.</p>
+
+        <h2>Practical Usage Examples</h2>
+        <p>Within the photo view, users can leverage <code>PhotoController</code> functionalities to enrich their photo viewing experience. For instance, adding geographical and thematic tags to photos allows for better organization and later retrieval.</p>
+
+        <h3>Integration with the User Interface</h3>
+        <p>Integration examples with the application's UI, demonstrating how to bind <code>PhotoController</code> actions to UI elements like buttons and list views.</p>
+    </div>
+
+    <div class="navigation">
+        <h3>Navigation</h3>
+        <a href="../../overview-summary.html">Overview</a> | 
+        <a href="../package-summary.html">Package</a> | 
+        <a href="../../controller/PhotoController.html">View Source</a>
+    </div>
+</body>
+</html>
