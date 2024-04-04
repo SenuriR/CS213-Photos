@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation of PhotoController</title>
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+    <script type="text/javascript" src="../../script.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>PhotoController Class</h1>
+        <p>The PhotoController class enables users to interact with individual photos within an album, providing functionalities such as viewing, tagging, and navigation between photos.</p>
+    </div>
+    
+    <div class="content">
+        <h2>Key Functionalities and Methods</h2>
+        <ul>
+            <li>
+                <b>void start(ArrayList&lt;User&gt; users, ListView&lt;Photo&gt; photos, User user, Album selectedAlbum)</b> - Initializes the controller with the list of users, selected album's photos, and the currently logged-in user.
+            </li>
+            <li>
+                <b>void handleSwitchButton(ActionEvent event)</b> - Navigates to the next or previous photo in the album based on the button pressed.
+            </li>
+            <li>
+                <b>void handleAddTagButton()</b> - Enables text fields for entering a new tag's type and value.
+            </li>
+            <li>
+                <b>void handleDeleteTagButton(ActionEvent event)</b> - Removes the selected tag from the photo and updates the data storage.
+            </li>
+            <li>
+                <b>void handleConfirmButton()</b> - Adds a new tag to the photo if it doesn't already exist, then updates the data storage.
+            </li>
+            <li>
+                <b>void handleCancelTagButton(ActionEvent event)</b> - Cancels the tag addition or deletion operation.
+            </li>
+            <li>
+                <b>void handleBackButton(ActionEvent event)</b> - Returns the user to the album view.
+            </li>
+            <li>
+                <b>void handleLogoutButton(ActionEvent event)</b> - Logs out the current user and returns to the login screen.
+            </li>
+        </ul>
+
+        <h2>Usage</h2>
+        <p>The PhotoController is primarily used within the photo view scene. It is responsible for all interactions related to a single photo, including displaying the photo, managing tags, and navigating among the photos in an album.</p>
+
+        <h3>Example:</h3>
+        <p>When a user selects a photo within an album, the PhotoController is invoked to display the photo along with its details and tags. The user can then add new tags, delete existing ones, or navigate to other photos within the same album.</p>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="navigation">
+        <a href="../../overview-summary.html">Overview</a> |
+        <a href="../package-summary.html">Package</a> |
+        <a href="../../controller/PhotoController.html">View Source</a>
+    </div>
+</body>
+</html>
