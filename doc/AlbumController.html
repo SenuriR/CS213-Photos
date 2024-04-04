@@ -1,1 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation of AlbumController</title>
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+    <script type="text/javascript" src="../../script.js"></script>
+</head>
+<body>
+    <h1>AlbumController Class</h1>
+    <p>The <code>AlbumController</code> class is responsible for managing the album's photos including operations like adding, deleting, moving, and copying photos within albums. It interacts with the album view to reflect these changes in real-time.</p>
+
+    <h2>Method Summary</h2>
+    <ul>
+        <li><b>void start(ArrayList&lt;User&gt; users, User user, Album selectedAlbum)</b> - Initializes the controller with users, the current user, and the selected album.</li>
+        <li><b>void handleAddPhotoButton()</b> - Opens a file chooser to add a new photo to the album.</li>
+        <li><b>void handleAlterPhotoButton(ActionEvent event)</b> - Prepares the interface for photo alteration operations based on the event source.</li>
+        <li><b>void handleCancelButton()</b> - Cancels the current operation and resets the interface.</li>
+        <li><b>void handleConfirmButton()</b> - Confirms the addition, deletion, or alteration of a photo and saves changes.</li>
+        <li><b>void handleDeletePhotoButton()</b> - Deletes the selected photo from the album.</li>
+        <li><b>void handleOpenPhotoButton(ActionEvent event)</b> - Opens the selected photo for viewing.</li>
+        <li><b>void handleBackButton(ActionEvent event)</b> - Returns to the user dashboard view.</li>
+        <li><b>void handleLogoutButton(ActionEvent event)</b> - Logs out the current user and returns to the login screen.</li>
+    </ul>
+
+    <h2>Usage Examples</h2>
+    <p>This section could provide code snippets or scenarios demonstrating how to utilize the <code>AlbumController</code> in the context of the application, focusing on its interaction with the album and photo models, and the view layer.</p>
+
+    <h2>Additional Notes</h2>
+    <p>Considerations for extending this class or specific behaviors to be aware of when using it within the application context.</p>
+
+    <h3>See Also:</h3>
+    <ul>
+        <li><a href="../../model/Album.html">Album Model</a></li>
+        <li><a href="../../model/Photo.html">Photo Model</a></li>
+        <li><a href="../../util/CommonFunctions.html">Common Utility Functions</a></li>
+    </ul>
+</body>
+</html>
 
