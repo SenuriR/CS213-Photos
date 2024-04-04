@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation of AlbumController Usage and Examples</title>
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+    <script type="text/javascript" src="../../script.js"></script>
+</head>
+<body>
+    <h1>Usage and Examples of AlbumController Class</h1>
+    <p>The <code>AlbumController</code> class plays a pivotal role in managing albums in our application. It provides functionalities to add, delete, move, and copy photos, ensuring a dynamic and responsive album experience for users. This document offers a deeper insight into how to leverage the <code>AlbumController</code> for effective album management.</p>
+
+    <h2>Detailed Method Usage</h2>
+    <h3>Adding a Photo to an Album</h3>
+    <p>To add a photo to an album, <code>handleAddPhotoButton()</code> is invoked, which prompts the user to choose a file. Upon selection, the photo is added to the current album. This method ensures that the album view is updated to reflect the addition.</p>
+    <pre><code>handleAddPhotoButton();
+// Opens a file chooser and adds the selected photo to the album.
+    </code></pre>
+
+    <h3>Altering Photo Information</h3>
+    <p>Photo details can be altered using <code>handleAlterPhotoButton(ActionEvent event)</code>. Based on the source of the action event, the method prepares the UI for the specific alteration, be it moving or copying a photo.</p>
+    <pre><code>handleAlterPhotoButton(actionEvent);
+// Prepares the interface for altering photo details based on the event source.
+    </code></pre>
+
+    <h3>Deleting a Photo</h3>
+    <p><code>handleDeletePhotoButton()</code> allows for the removal of a selected photo from an album. It requires confirmation from the user before the photo is permanently deleted.</p>
+    <pre><code>handleDeletePhotoButton();
+// Deletes the currently selected photo from the album after user confirmation.
+    </code></pre>
+
+    <h3>Viewing a Photo</h3>
+    <p>To view a photo in detail, <code>handleOpenPhotoButton(ActionEvent event)</code> is used. It opens a new window where the selected photo is displayed in a larger format, allowing for a closer examination.</p>
+    <pre><code>handleOpenPhotoButton(actionEvent);
+// Opens the selected photo in a new window for detailed viewing.
+    </code></pre>
+
+    <h2>Practical Scenarios</h2>
+    <p>In practical scenarios, <code>AlbumController</code> facilitates seamless navigation through an album's photos, editing of photo details, and management of the photo collection within an album. Its methods are designed to interact closely with the album and photo models, ensuring data integrity and a synchronized view.</p>
+
+    <h3>See Also:</h3>
+    <ul>
+        <li><a href="../../model/Album.html">Album Model</a></li>
+        <li><a href="../../model/Photo.html">Photo Model</a></li>
+        <li><a href="../../util/CommonFunctions.html">Common Utility Functions</a></li>
+    </ul>
+</body>
+</html>
