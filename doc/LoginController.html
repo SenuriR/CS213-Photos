@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <!-- Generated documentation for the LoginController class -->
+    <meta charset="UTF-8">
+    <title>LoginController Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+    <script type="text/javascript" src="../../script.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>LoginController Class</h1>
+        <p>Responsible for managing the login process, including verifying user credentials and navigating to the appropriate dashboard based on the user role (admin, stock user, or regular user).</p>
+    </div>
+
+    <div class="content">
+        <h2>Class Overview</h2>
+        <p>The <code>LoginController</code> class processes input from the login view, authenticates users, and directs them to either the admin dashboard, stock dashboard, or user dashboard. It also handles first-time setup by creating necessary data files and stock user accounts if they don't exist.</p>
+
+        <h2>Method Details</h2>
+        <ul>
+            <li>
+                <h3>public void start(Stage stage)</h3>
+                <p>Initializes the controller. This method is a placeholder and may contain setup logic as needed.</p>
+            </li>
+            <li>
+                <h3>public void handleLoginButton(ActionEvent event)</h3>
+                <p>Handles the login process. It reads the username from the input field, checks for the existence of the data file, and validates the user. Depending on the user type, it loads the corresponding dashboard.</p>
+            </li>
+        </ul>
+
+        <h2>Usage</h2>
+        <p>This controller is bound to the login view FXML file and is invoked when the application starts and presents the login screen to the user. The <code>handleLoginButton</code> method is called when the user clicks the login button.</p>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="navigation">
+        <a href="../../overview-summary.html">Overview</a> |
+        <a href="../package-summary.html">Package</a> |
+        <a href="../../controller/LoginController.html">View Source</a>
+    </div>
+</body>
+</html>
