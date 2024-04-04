@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation of PhotoSearchController</title>
+    <link rel="stylesheet" type="text/css" href="../../stylesheet.css" title="Style">
+    <script type="text/javascript" src="../../script.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>PhotoSearchController Class</h1>
+        <p>The PhotoSearchController class facilitates the search functionality within the application, allowing users to search for photos based on date ranges and tags.</p>
+    </div>
+    
+    <div class="content">
+        <h2>Functional Overview</h2>
+        <p>This controller is responsible for handling user inputs for photo searches, including date range selection and tag filtering. It displays the search results in a list view, enabling users to view or create an album from these results.</p>
+
+        <h2>Method Summary</h2>
+        <ul>
+            <li>
+                <b>void start(User user, ArrayList&lt;User&gt; users)</b> - Initializes the controller with the current user and a list of all users.
+            </li>
+            <li>
+                <b>void handleLogoutButton(ActionEvent event)</b> - Logs out the current user and returns to the login screen.
+            </li>
+            <li>
+                <b>void handleBackToAlbumsButton(Event event)</b> - Navigates back to the user dashboard, displaying all albums.
+            </li>
+            <li>
+                <b>void handleAddTag(ActionEvent event)</b> - Adds a tag to the search criteria list.
+            </li>
+            <li>
+                <b>void handleRemoveTag(ActionEvent event)</b> - Removes a selected tag from the search criteria list.
+            </li>
+            <li>
+                <b>void handleSearchPhotos(ActionEvent event)</b> - Performs the search based on the specified criteria and displays results.
+            </li>
+            <li>
+                <b>void handleCreateAlbumFromResults()</b> - Creates a new album from the search results.
+            </li>
+        </ul>
+
+        <h2>Usage Example</h2>
+        <p>The PhotoSearchController is used in scenarios where users wish to find photos within their collection based on specific criteria. Upon entering search parameters and executing a search, the user is presented with matching photos, which can then be compiled into a new album.</p>
+    </div>
+
+    <div class="navigation">
+        <a href="../../overview-summary.html">Overview</a> | <a href="../package-summary.html">Package</a> | <a href="../../controller/PhotoSearchController.html" title="class in controller">View Source</a>
+    </div>
+</body>
+</html>
