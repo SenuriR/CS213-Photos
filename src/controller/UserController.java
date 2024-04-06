@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javafx.collections.FXCollections;
@@ -19,11 +20,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.User;
-import util.CommonFunctions;
+import util.Helper;
 import model.Album;
 
 public class UserController {
 	private User user;
+	private ArrayList<Album> userAlbums;
+	private ArrayList<User> users;
 	@FXML
 	private Label usernameLabel;
 	@FXML
@@ -33,11 +36,12 @@ public class UserController {
 	@FXML
 	private Button logOutButton, addAlbumButton, deleteAlbumButton, renameAlbumButton, openAlbumButton, searchPhotosButton, confirmButton, cancelButton;
 
-	public void Start(User user) {
+	public void Start(User user, ArrayList<User> users) {
 		this.user = user;
-		albumsList.setItems(FXCollections.observableArrayList(user.getAlbums()));
+		this.users = users;
+		this.userAlbums = user.getAlbums();
+		albumsList.setItems(FXCollections.observableArrayList(userAlbums));
 		usernameLabel.setText("User Dashboard For - " + user.getUsername().toString().toUpperCase());
-
 	}
 	public void handleCancelButton(ActionEvent event) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -56,7 +60,7 @@ public class UserController {
 	public void handleSearchPhotosButton(ActionEvent event) {
 		// something
 	}
-	public void handleOpenAlbumButton(ActionEvent event) {
+	public void handleOpenAlbumButton(ActionEvent event) { // WORK ON THIS PART NOW
 		Album albumToView = albumsList.getSelectionModel().getSelectedItem();
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AlbumDisplay.fxml"));
@@ -64,7 +68,7 @@ public class UserController {
 			PhotoManagerController controller = loader.<PhotoManagerController>getController();
 			Scene scene = new Scene(root);
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			controller.Start(user, albumToView);
+			controller.Start(user, albumToView, users);
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception exception) {
@@ -79,6 +83,14 @@ public class UserController {
 	public void handleDeleteAlbumButton(ActionEvent event) {
 		// delete albumToDelete from Album arraylist
 		Album album = albumsList.getSelectionModel().getSelectedItem();
+		if (album == null) {
+			Alert alert0 = new Alert(AlertType.ERROR);
+			alert0.setTitle("User Dashboard Error");
+			alert0.setHeaderText("No Album Selected");
+			alert0.setContentText("Please select an album to delete.");
+			alert0.showAndWait();
+			return;
+		}
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("User Dashboard Confirmation");
 		alert.setHeaderText("Album deletion confirmation.");
@@ -99,6 +111,18 @@ public class UserController {
 	public void handleAddAlbumButton(ActionEvent event) {
 		// create an album instance, add to album arraylist
 		// probably redirect to AlbumDashboard
+		if (albumField.getText().trim().isEmpty()) {
+			Alert alert0 = new Alert(AlertType.ERROR);
+			alert0.setTitle("User Dashboard Error");
+			alert0.setHeaderText("No Album Name");
+			alert0.setContentText("Please type an album name.");
+			alert0.showAndWait();
+			return;
+		}
+		Album albumToAdd = new Album(albumField.getText());
+		userAlbums.add(albumToAdd);
+		albumsList.setItems(FXCollections.observableArrayList(userAlbums));
+
 	}
 	public void handleLogOutButton(ActionEvent event) {
 		try {
@@ -110,6 +134,7 @@ public class UserController {
 			// controller.start();
 			stage.setScene(scene);
 			stage.show();
+			Helper.writeUsersToDisk(users);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
