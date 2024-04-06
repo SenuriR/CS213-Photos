@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane prefHeight="640.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PhotoController">
+<BorderPane prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PhotoController">
     <top>
         <HBox prefHeight="50.0" spacing="20" alignment="CENTER" style="-fx-background-color: #EEE;">
             <children>

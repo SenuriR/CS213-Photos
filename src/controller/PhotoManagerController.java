@@ -17,17 +17,23 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.scene.control.Tooltip;
 import model.User;
 import util.Helper;
 import model.Album;
 import model.Photo;
-
+import model.Tag;
+import util.PhotoListCell;
 
 // controller for AlbumDisplay.fxml
 public class PhotoManagerController {
@@ -43,7 +49,8 @@ public class PhotoManagerController {
     private ArrayList<User> users;
     private ArrayList<Photo> photos;
     private Album album;
-
+    private ArrayList<Tag> tags;
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void Start(User user, Album album, ArrayList<User> users) {
         // handle start
         this.user = user;
@@ -52,22 +59,50 @@ public class PhotoManagerController {
         this.photos = album.getPhotos();
         this.albumName.setText(album.getName());
         photoList.setItems(FXCollections.observableArrayList(photos));
+        photoList.setCellFactory(param -> new PhotoListCell());
     }
 
-    // WORK ON THIS NEXT
-    public void removeSelectedTag(ActionEvent event) {
+    public void removeSelectedTag(ActionEvent event) { // I don't think this is necessary in the album view
         // handle remove selected tag
         String tagToRemove = tagField.getText();
         // access current photo
 
     }
 
-    public void addTag(ActionEvent event) {
-        // handle add tag
+    public void addTag(ActionEvent event) { // I don't think this is necessary as well - the editing of tags should be excluded to the individual photo view only
+        String tagName;
+        String tagValue;
+        String[] info = tagField.getText().split(":");
+        tagName = info[0];
+        if (info.length == 2 ) {
+            tagName = info[0].trim();
+            tagValue = info[1].trim();
+        } else {
+            Alert alert0 = new Alert(AlertType.ERROR);
+			alert0.setTitle("Tag Input Error");
+			alert0.setHeaderText("Wrong Tag Format");
+			alert0.setContentText("Please enter tag in format: [tag name]: [tag value]");
+			alert0.showAndWait();
+			return;
+        }
+
+        Photo photo = (Photo) photoList.getSelectionModel().getSelectedItem();
+        this.tags = photo.getTags();
+        Tag tagToAdd = new Tag(tagName, tagValue);
+        tags.add(tagToAdd);
+        photoList.refresh();
+        Helper.writeUsersToDisk(users);
     }
 
     public void editCaption(ActionEvent event) {
         // handle edit caption
+        String caption = captionField.getText();
+        Photo photo = (Photo) photoList.getSelectionModel().getSelectedItem();
+        photo.setCaption(caption);
+        captionField.clear();
+        photoList.refresh();
+        Helper.writeUsersToDisk(users);
+        
     }
     
     public void deletePhoto(ActionEvent event) {
@@ -96,6 +131,7 @@ public class PhotoManagerController {
 			alert1.setHeaderText("Photo deleted");
 			alert1.setContentText("Photo " + photo.getName() + " was deleted");
 		}
+        photoList.refresh();
     }
     
     public void openSelectedPhoto(ActionEvent event) {

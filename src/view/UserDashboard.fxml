@@ -5,7 +5,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane prefHeight="640.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UserController">
+<BorderPane prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UserController">
    <top>
       <VBox prefHeight="120.0" prefWidth="480.0" style="-fx-padding: 10px 20px;">
          <children>
