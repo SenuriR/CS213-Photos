@@ -2,13 +2,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.HBox?>
 
 <VBox spacing="10" prefHeight="640.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PhotoManagerController">
    <children>
       <!-- Navigation and Album Info -->
       <HBox spacing="15">
          <children>
-            <Button text="Back to Albums" onAction="#handleBack" />
+            <Button text="Back to User Dashboard" onAction="#handleBack" />
             <Label fx:id="albumName" text="Album: [Album Name]" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
             <Button fx:id="logout" text="Logout" onAction="#handleLogout" />
          </children>
@@ -31,8 +32,13 @@
             <Button fx:id="removeTag" text="Remove" onAction="#removeSelectedTag" />
          </children>
       </HBox>
+      <HBox spacing="5">
+         <children>
+            <Button fx:id="openPhoto" text="Open Photo" onAction="#openSelectedPhoto" />
+         </children>
+      </HBox>
       <!-- Photo List/Display -->
-      <ListView fx:id="photoList" VBox.vgrow="ALWAYS" />
+         <ListView fx:id="photoList" VBox.vgrow="ALWAYS" />
    </children>
 </VBox>
 
