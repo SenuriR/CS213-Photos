@@ -11,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.User;
+import model.Album;
 
 public class PhotoManagerController {
     @FXML
@@ -21,6 +23,10 @@ public class PhotoManagerController {
     TextField captionField, tagField;
     @FXML
     ListView photoList;
+
+    public void Start(User user, Album album) {
+        // handle start
+    }
 
     public void removeSelectedTag(ActionEvent event) {
         // handle remove selected tag
