@@ -12,6 +12,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import model.Photo;
+import model.Album;
 
 public class PhotoController {
 	@FXML
@@ -24,6 +26,13 @@ public class PhotoController {
     TextField tagTypeField, tagValueField;
     @FXML
     ListView tagsList;
+    private Photo photo;
+    private Album album;
+
+    public void Start(Photo photo, Album album) {
+        this.photo = photo; 
+        this.album = album;
+    }
 
     public void handleBackButton(ActionEvent event) {
         // handle back button -- context of returning to album...
