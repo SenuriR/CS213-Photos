@@ -10,42 +10,39 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-public class PhotoController {
-	@FXML
-    Button backButton, logoutButton, previousButton, nextButton, addTagButton, deleteTagButton;
+public class PhotoManagerController {
     @FXML
-    ImageView imageView;
+    Label albumName;
     @FXML
-    Label photoNameText, captionText, dateTakenText;
+    Button logout, addPhoto, deletePhoto, editCaption, addTag, removeTag;
     @FXML
-    TextField tagTypeField, tagValueField;
+    TextField captionField, tagField;
     @FXML
-    ListView tagsList;
+    ListView photoList;
 
-    public void handleBackButton(ActionEvent event) {
-        // handle back button -- context of returning to album...
+    public void removeSelectedTag(ActionEvent event) {
+        // handle remove selected tag
     }
 
-    public void handlePreviousButton(ActionEvent event) {
-        // handle previous button -- context of previous photo in current album
+    public void addTag(ActionEvent event) {
+        // handle add tag
     }
 
-    public void handleNextButton(ActionEvent event) {
-        // handle next button
+    public void editCaption(ActionEvent event) {
+        // handle edit caption
     }
     
-    public void handleAddTagButton(ActionEvent event) {
-        // handle add tag button
+    public void deletePhoto(ActionEvent event) {
+        // handle delte photo
+    }
+    
+    public void addPhoto(ActionEvent event) {
+        // handle add photo
     }
 
-    public void handleDeleteTagButton(ActionEvent event) {
-        // handle delete tag button
-    }
-
-    public void handleLogoutButton(ActionEvent event) {
+    public void handleLogout(ActionEvent event) {
         // handle logout
         try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginScreen.fxml"));
