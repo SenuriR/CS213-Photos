@@ -23,6 +23,7 @@ import model.Photo;
 import javafx.scene.image.Image;
 import java.util.Calendar;
 import model.User;
+import util.Helper;
 
 
 public class LoginController {
@@ -67,15 +68,9 @@ public class LoginController {
 				 stock.getAlbums().add(stockAlbum);
 				 users = new ArrayList<>();
 				 users.add(stock);
-				 try {
-					FileOutputStream fileOut = new FileOutputStream("data/data.dat");
-					ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
-					objOut.writeObject(users);
-					objOut.close();
-					fileOut.close();
-				 } catch (Exception e) {
-					e.printStackTrace();
-				 }
+				 User admin = new User("admin");
+				 users.add(admin);
+				 Helper.writeUsersToDisk(users);
 			 }
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -93,7 +88,6 @@ public class LoginController {
 		try {
 			FileInputStream fileInStrm = new FileInputStream("data/data.dat");
 			ObjectInputStream objInStrm  = new ObjectInputStream(fileInStrm);
-			users = new ArrayList<>();
 			users = (ArrayList<User>)objInStrm.readObject();
 			objInStrm.close();
 			fileInStrm.close();

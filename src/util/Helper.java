@@ -1,6 +1,9 @@
 package util;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import controller.LoginController;
@@ -12,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import model.User;
 
 public class Helper {
     public void handleLogout(ActionEvent event, Stage primaryStage) {
@@ -39,6 +43,18 @@ public class Helper {
                 alert1.showAndWait();
             }
 		}
+	}
+
+    public static void writeUsersToDisk(ArrayList<User> users) {
+		try { // write to disk
+			FileOutputStream fileOut = new FileOutputStream("data/data.dat");
+			ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
+			objOut.writeObject(users);
+			objOut.close();
+			fileOut.close();
+		 } catch (Exception e) {
+			e.printStackTrace();
+		 }
 	}
 
 }

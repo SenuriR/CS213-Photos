@@ -14,13 +14,15 @@ import javafx.stage.Stage;
 import model.User;
 import model.Album;
 
+
+// controller for AlbumDisplay.fxml
 public class PhotoManagerController {
     @FXML
     Label albumName;
     @FXML
     Button logout, addPhoto, deletePhoto, editCaption, addTag, removeTag;
     @FXML
-    TextField captionField, tagField;
+    TextField tagField, captionField;
     @FXML
     ListView photoList;
 
@@ -30,6 +32,9 @@ public class PhotoManagerController {
 
     public void removeSelectedTag(ActionEvent event) {
         // handle remove selected tag
+        String tagToRemove = tagField.getText();
+        // access current photo
+        
     }
 
     public void addTag(ActionEvent event) {

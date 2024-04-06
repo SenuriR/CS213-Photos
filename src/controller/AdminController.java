@@ -1,6 +1,8 @@
 package controller;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javafx.collections.FXCollections;
@@ -16,6 +18,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.User;
+import util.Helper;
 import javafx.scene.control.ButtonType;
 import java.util.Optional;
 
@@ -74,6 +77,7 @@ public class AdminController {
 		// go ahead and add newUser to userListView
 		User newUser = new User(username);
 		users.add(newUser);
+		Helper.writeUsersToDisk(users);
 		usernameField.clear();
 		userListView.getItems().add(newUser);		
 	}
@@ -100,6 +104,7 @@ public class AdminController {
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.isPresent() && result.get() == ButtonType.OK) {
 			users.remove(userToDelete);
+			Helper.writeUsersToDisk(users);
 			userListView.getItems().remove(userToDelete);
 		}
 	}
