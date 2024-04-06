@@ -107,7 +107,7 @@ public class LoginController {
 					UserController controller = loader.<UserController>getController();
 					Scene scene = new Scene(root);
 					Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-					controller.Start(user);
+					controller.Start(user, users);
 					stage.setScene(scene);
 					stage.show();
 				}				

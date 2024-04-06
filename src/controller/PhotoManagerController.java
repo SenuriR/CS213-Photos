@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.ArrayList;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.User;
+import util.Helper;
 import model.Album;
 
 
@@ -25,16 +28,20 @@ public class PhotoManagerController {
     TextField tagField, captionField;
     @FXML
     ListView photoList;
+    private User user;
+    private ArrayList<User> users;
 
-    public void Start(User user, Album album) {
+    public void Start(User user, Album album, ArrayList<User> users) {
         // handle start
+        this.user = user;
+        this.users = users;
     }
 
     public void removeSelectedTag(ActionEvent event) {
         // handle remove selected tag
         String tagToRemove = tagField.getText();
         // access current photo
-        
+
     }
 
     public void addTag(ActionEvent event) {
@@ -64,6 +71,7 @@ public class PhotoManagerController {
 			controller.start(stage);
 			stage.setScene(scene);
 			stage.show();
+            Helper.writeUsersToDisk(users);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}

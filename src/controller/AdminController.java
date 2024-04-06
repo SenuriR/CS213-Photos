@@ -133,6 +133,7 @@ public class AdminController {
 			// controller.start();
 			stage.setScene(scene);
 			stage.show();
+			Helper.writeUsersToDisk(users);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
