@@ -1,7 +1,9 @@
 package controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
@@ -10,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -19,6 +22,7 @@ import model.Album;
 import model.Photo;
 import javafx.scene.image.Image;
 import java.util.Calendar;
+import model.User;
 
 
 public class LoginController {
@@ -29,7 +33,7 @@ public class LoginController {
 	@FXML
 	private TextField passwordField;
 	ArrayList<User> users;
-	private Stage primaryStage;
+	User user;
 
 	public void start(Stage stage) {
 		// don't think we need anything here, because we are getting the stage as an input from main photo app
@@ -61,6 +65,7 @@ public class LoginController {
 
 				 User stock = new User("stock");
 				 stock.getAlbums().add(stockAlbum);
+				 users = new ArrayList<>();
 				 users.add(stock);
 				 try {
 					FileOutputStream fileOut = new FileOutputStream("data/data.dat");
@@ -83,39 +88,62 @@ public class LoginController {
 		if (!dataFile.exists() || !dataFile.isFile()) {
 			createDataFile(dataFile);
 		}
-		users = new ArrayList<>();
-		User user = new User(username);
-		users.add(user);
+
+		// file already exists
 		try {
-			if(username.equals("admin")){
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminDashboard.fxml"));
-				Parent root = loader.load();
-				AdminController controller = loader.<AdminController>getController();
-				Scene scene = new Scene(root);
-				Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-				controller.start(users);
-				stage.setScene(scene);
-				stage.show();
+			FileInputStream fileInStrm = new FileInputStream("data/data.dat");
+			ObjectInputStream objInStrm  = new ObjectInputStream(fileInStrm);
+			users = new ArrayList<>();
+			users = (ArrayList<User>)objInStrm.readObject();
+			objInStrm.close();
+			fileInStrm.close();
+			for (User userPtr: users) {
+				if (userPtr.getUsername().equals(username)) {
+					user = userPtr;
+				}
 			}
-			if(username.equals("stock")) {
-				// implement stock when more of code framework is put together
+			if(user != null){
+				if (username.equals("admin")){
+					// admin user
+					redirectToAdmin(event);
+				} else {
+					// valid user
+					FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/UserDashboard.fxml"));
+					Parent root = loader.load();
+					UserController controller = loader.<UserController>getController();
+					Scene scene = new Scene(root);
+					Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+					controller.Start(user);
+					stage.setScene(scene);
+					stage.show();
+				}				
 			} else {
-				// redirect to User's Dashboard
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/UserDashboard.fxml"));
-				Parent root = loader.load();
-				UserController controller = loader.<UserController>getController();
-				Scene scene = new Scene(root);
-				Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-				controller.Start(user);
-				stage.setScene(scene);
-				stage.show();
+				// user DNE
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setTitle("User Does Not Exist");
+				alert.setHeaderText(null);
+				alert.setContentText("User does not exist. Please create a user through admin.");
+				alert.showAndWait();
+				redirectToAdmin(event);
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 
-
+	public void redirectToAdmin(ActionEvent event) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminDashboard.fxml"));
+			Parent root = loader.load();
+			AdminController controller = loader.<AdminController>getController();
+			Scene scene = new Scene(root);
+			Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+			controller.start(users);
+			stage.setScene(scene);
+			stage.show();
+		}  catch (Exception e) {
+			e.printStackTrace();
+		}		
+		
+	}
 }

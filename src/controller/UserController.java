@@ -61,7 +61,7 @@ public class UserController {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AlbumDisplay.fxml"));
 			Parent root = loader.load();
-			AlbumController controller = loader.<AlbumController>getController();
+			PhotoManagerController controller = loader.<PhotoManagerController>getController();
 			Scene scene = new Scene(root);
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			controller.Start(user, albumToView);
