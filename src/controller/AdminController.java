@@ -1,192 +1,136 @@
 package controller;
 
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
+
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert.AlertType;
 import model.User;
-import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
+import java.util.Optional;
 
-/**
- * The Admin Controller manipulates the user list and feeds new updates into the
- * view.
- * 
- *
- */
 public class AdminController {
+	private ArrayList<User> users;
 	@FXML
-	private Button actionTypeButton, logOutButton, cancelButton, confirmButton, createUserButton, deleteUserButton,
-			listUsersButton;
+	private TextField usernameField;
 	@FXML
-	private TextField userField;
+	private ListView<User> userListView;
 	@FXML
-	private ListView<User> users;
+	private Button confirmUserAction, cancelUserAction, addUserButton, removeUserButton, showUserButton, logoutButton;
 
-	/**
-	 * On start the users are initialized.
-	 * 
-	 * @param users
-	 *            is the list of users that are in the system.
-	 * 
-	 */
 	public void start(ArrayList<User> users) {
-		this.users.setItems(FXCollections.observableArrayList(users));
-		this.users.getSelectionModel().select(0);
-		this.users.setVisible(false);
-		disableInput(true);
+		// initialization stuff
+		this.users = users;
+
+	}
+	
+	public void handleConfirmAction(ActionEvent event) {
+		// not sure what to do here
 	}
 
-	/**
-	 * Confirms the cancellation of the action when trying to add a new user.
-	 */
-	public void handleCancelButton() {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Admin Dashboard Confirmation");
-		alert.setHeaderText("Cancellation confirmation.");
-		alert.setContentText("Are you sure you want to cancel this action?");
+	public void handleCancelAction(ActionEvent event) {
+		// not sure what to do here
+	}
 
-		alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
-
-		Optional<ButtonType> result = alert.showAndWait();
-
-		if (result.get().equals(ButtonType.YES)) {
-			userField.clear();
-			disableInput(true);
+	public void handleAddUser(ActionEvent event) {
+		
+		// get string version of usernameField
+		String username = usernameField.getText().trim();
+		
+		// if no username given as input
+		if(username.isEmpty()) {
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Empty Username");
+			alert.setHeaderText(null);
+			alert.setContentText("Please enter username");
+			alert.showAndWait();
+			return;
 		}
-	}
-
-	/**
-	 * On confirm the new user is checked into the list of users and if exist an
-	 * error is thrown otherwise the user is added to users list. Save the data
-	 */
-	public void handleConfirmButton() {
-		User newUser = new User(userField.getText());
-		ObservableList<User> userList = users.getItems();
-
-		for (User currentUser : userList) {
-			if (currentUser.getUsername().equals(newUser.getUsername())) {
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Admin Dashboard Error");
-				alert.setHeaderText("User add error.");
-				alert.setContentText("This user already exists.");
-
-				alert.showAndWait();
-				return;
+		
+		// if username already taken
+		if (users != null) {
+			for (User user : users) {
+				if (user.getUsername().equals(username)){
+					Alert alert = new Alert(Alert.AlertType.WARNING);
+					alert.setTitle("Duplicate Username!");
+					alert.setHeaderText(null);
+					alert.setContentText("Username is taken! Please choose different uesrname.");
+					alert.showAndWait();
+					return;
+				}
 			}
 		}
 
-		users.getItems().add(newUser);
-		users.refresh();
-		saveData();
-		userField.clear();
-		disableInput(true);
+		// go ahead and add newUser to userListView
+		User newUser = new User(username);
+		users.add(newUser);
+		usernameField.clear();
+		userListView.getItems().add(newUser);		
 	}
 
-	/**
-	 * Confirms if the user wants to delete a user and then remove the user from the
-	 * users list.
-	 */
-	public void handleDeleteUserButton() {
-		User user = users.getSelectionModel().getSelectedItem();
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Admin Dashboard Confirmation");
-		alert.setHeaderText("User deletion confirmation.");
-		alert.setContentText("Are you sure you want to delete \"" + user.getUsername() + "\"'s account?");
+	public void handleRemoveUser(ActionEvent event) {
+		User userToDelete = userListView.getSelectionModel().getSelectedItem();
 
-		alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+		// make sure a user was chosen
+		if (userToDelete == null) {
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("No User Chosen!");
+			alert.setHeaderText(null);
+			alert.setContentText("Please choose a user to remove.");
+			alert.showAndWait();
+			return;
+		}
+
+		// confirm userToDelete is intended
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle("Confirm Removal of User");
+		alert.setHeaderText(null);
+		alert.setContentText("Remove user: " + userToDelete.getUsername() + "?");
 
 		Optional<ButtonType> result = alert.showAndWait();
-
-		if (result.get().equals(ButtonType.YES)) {
-			users.getItems().remove(user);
-			users.refresh();
-			saveData();
+		if (result.isPresent() && result.get() == ButtonType.OK) {
+			users.remove(userToDelete);
+			userListView.getItems().remove(userToDelete);
 		}
 	}
 
-	/**
-	 * Calls the disableInput function to enable the field to let user input the
-	 * username.
-	 */
-	public void handleAddButton() {
-		disableInput(false);
-	}
-
-	/**
-	 * Makes the users visible on click.
-	 */
-	public void handleListUsersButton() {
-		users.setVisible(true);
-		users.refresh();
-	}
-
-	/**
-	 * Common function to enable and disable the field views as well as buttons
-	 * depending on the situations.
-	 * 
-	 * @param value
-	 *            : takes the boolean value to turn on or off the fields and
-	 *            buttons.
-	 */
-	protected void disableInput(boolean value) {
-		userField.setDisable(value);
-		confirmButton.setDisable(value);
-		cancelButton.setDisable(value);
-		createUserButton.setDisable(!value);
-		deleteUserButton.setDisable(!value);
-		listUsersButton.setDisable(!value);
-	}
-
-	/**
-	 * Common functionality to save the users data by converting a listview to
-	 * arraylist and writing to data.dat file.
-	 */
-	private void saveData() {
-		try {
-			FileOutputStream fileOutputStream = new FileOutputStream("data/data.dat");
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-
-			objectOutputStream.writeObject(new ArrayList<>(Arrays.asList(users.getItems().toArray())));
-			objectOutputStream.close();
-			fileOutputStream.close();
-		} catch (Exception exception) {
-			exception.printStackTrace();
+	public void handleShowUsers(ActionEvent event) {
+		// show ArrayList<User> users on screen
+		if (users != null && !users.isEmpty()) {
+			userListView.getItems().clear();
+			userListView.getItems().addAll(users);
+		} else {
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("No Users");
+			alert.setHeaderText(null);
+			alert.setContentText("There are no users to display.");
+			alert.showAndWait();
 		}
 	}
 
-	/**
-	 * On event, loads the login screen.
-	 * 
-	 * @param event
-	 *            takes the mouse click event
-	 */
-	public void handleLogoutButton(ActionEvent event) {
-
+	public void handleLogout(ActionEvent event) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginScreen.fxml"));
-			Parent parent = (Parent) loader.load();
+			Parent parent = loader.load();
+			LoginController controller = loader.<LoginController>getController();
 			Scene scene = new Scene(parent);
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			// controller.start();
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
-
 	}
 }
+
