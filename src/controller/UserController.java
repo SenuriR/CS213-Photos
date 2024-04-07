@@ -58,10 +58,30 @@ public class UserController {
 		// something
 	}
 	public void handleSearchPhotosButton(ActionEvent event) {
-		// something
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SearchPhotos.fxml"));
+			Parent root = loader.load();
+			PhotoSearchController controller = loader.<PhotoSearchController>getController();
+			Scene scene = new Scene(root);
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			controller.Start(users, user);
+			stage.setScene(scene);
+			stage.show();
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
 	}
+
 	public void handleOpenAlbumButton(ActionEvent event) { // WORK ON THIS PART NOW
 		Album albumToView = albumsList.getSelectionModel().getSelectedItem();
+		if (albumToView == null) {
+			Alert alert0 = new Alert(AlertType.ERROR);
+			alert0.setTitle("User Dashboard Error");
+			alert0.setHeaderText("No Album Selected");
+			alert0.setContentText("Please select an album to delete.");
+			alert0.showAndWait();
+			return;
+		}
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AlbumDisplay.fxml"));
 			Parent root = loader.load();
@@ -79,6 +99,7 @@ public class UserController {
 		// something
 		((Album) albumsList.getSelectionModel().getSelectedItems()).setName(albumField.getText());
 		albumField.clear();
+		Helper.writeUsersToDisk(users);
 	}
 	public void handleDeleteAlbumButton(ActionEvent event) {
 		// delete albumToDelete from Album arraylist
@@ -106,7 +127,17 @@ public class UserController {
 			alert1.setHeaderText("Album deleted");
 			alert1.setContentText("Album " + album.getName() + " was deleted");
 		}
+		Helper.writeUsersToDisk(users);
 	}
+
+	public boolean albumAlreadyExists(Album newAlbum){
+        for (Album a : user.getAlbums()) {
+            if (a.equals(newAlbum)) {
+                return true;
+            }
+        }
+        return false;
+    }
 	
 	public void handleAddAlbumButton(ActionEvent event) {
 		// create an album instance, add to album arraylist
@@ -120,8 +151,23 @@ public class UserController {
 			return;
 		}
 		Album albumToAdd = new Album(albumField.getText());
-		userAlbums.add(albumToAdd);
-		albumsList.setItems(FXCollections.observableArrayList(userAlbums));
+		if(albumAlreadyExists(albumToAdd)) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Create Album Error");
+			alert.setHeaderText("Album Name Taken");
+			alert.setContentText("Entered album name already exists. Please add a different album name.");
+			alert.showAndWait();
+			return;
+		} else {
+			userAlbums.add(albumToAdd);
+			Helper.writeUsersToDisk(users);
+			Alert alert1 = new Alert(AlertType.INFORMATION);
+			alert1.setTitle("Create Album Confirmation");
+			alert1.setHeaderText("Album Created");
+			alert1.setContentText("Album " + albumToAdd.getName() + " was created");
+			alert1.showAndWait();
+			albumsList.setItems(FXCollections.observableArrayList(userAlbums));
+		}
 
 	}
 	public void handleLogOutButton(ActionEvent event) {

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import javafx.scene.image.Image;
 
@@ -79,6 +80,22 @@ public class Photo implements Serializable {
 	 */
 	public ArrayList<Tag> getTags() {
 		return tags;
+	}
+
+	public ArrayList<String> getTagNames() {
+		List<String> tagNames = new ArrayList<>();
+        for (Tag tag : tags) {
+            tagNames.add(tag.getName());
+        }
+		return tagNames;
+	}
+
+	public ArrayList<String> getTagValues() {
+		List<String> tagValues = new ArrayList<>();
+        for (Tag tag : tags) {
+            tagValues.add(tag.getValue());
+        }
+		return tagValues;
 	}
 
 	/**

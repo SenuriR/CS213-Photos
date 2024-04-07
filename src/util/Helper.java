@@ -1,9 +1,12 @@
 package util;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 import controller.LoginController;
@@ -15,6 +18,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import model.Album;
+import model.Photo;
+import model.Tag;
 import model.User;
 
 public class Helper {
@@ -56,5 +62,22 @@ public class Helper {
 			e.printStackTrace();
 		 }
 	}
+
+    public static void readUsersFromDisk(ArrayList<User> users) {
+        try {
+            FileInputStream fileIn = new FileInputStream("data/data.dat");
+            ObjectInputStream objIn = new ObjectInputStream(fileIn);
+            users = (ArrayList<User>) objIn.readObject();
+            objIn.close();
+            fileIn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<Photo> removeDuplicatePhotos(User user, ArrayList<Photo> photos) {
+        HashSet<Photo> photosNoDuplicates = new HashSet<>(photos);
+        return new ArrayList<>(photosNoDuplicates);
+    }
 
 }

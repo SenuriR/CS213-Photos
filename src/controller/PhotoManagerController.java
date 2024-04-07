@@ -132,10 +132,20 @@ public class PhotoManagerController {
 			alert1.setContentText("Photo " + photo.getName() + " was deleted");
 		}
         photoList.refresh();
+        Helper.writeUsersToDisk(users);
+        Helper.readUsersFromDisk(users);
     }
     
     public void openSelectedPhoto(ActionEvent event) {
         Photo photoSelected = (Photo) photoList.getSelectionModel().getSelectedItem(); // double check if this correct
+		if (photoSelected == null) {
+			Alert alert0 = new Alert(AlertType.ERROR);
+			alert0.setTitle("Album Dashboard Error");
+			alert0.setHeaderText("No Photo Selected");
+			alert0.setContentText("Please select a photo to open.");
+			alert0.showAndWait();
+			return;
+		}
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/PhotoView.fxml"));
             Parent root = loader.load();
@@ -165,7 +175,6 @@ public class PhotoManagerController {
         if (chosenFile != null) {
             Image imageToAdd = new Image(chosenFile.toURI().toString());
             String name = chosenFile.getName();
-            System.out.println(name);
             Calendar date = Calendar.getInstance();
             date.setTimeInMillis(chosenFile.lastModified());
             Photo photoToAdd = new Photo(name, imageToAdd, date);
