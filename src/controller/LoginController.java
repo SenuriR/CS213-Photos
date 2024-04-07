@@ -31,8 +31,6 @@ public class LoginController {
 	private Button loginButton;
 	@FXML
 	private TextField usernameField;
-	@FXML
-	private TextField passwordField;
 	ArrayList<User> users;
 	User user;
 

@@ -18,6 +18,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import model.User;
 import util.Helper;
@@ -95,11 +96,50 @@ public class UserController {
 			exception.printStackTrace();
 		}
 	}
+
+	public boolean albumAlreadyExists(Album newAlbum){
+        for (Album a : user.getAlbums()) {
+            if (a.equals(newAlbum)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	public void handleRenameAlbumButton(ActionEvent event) {
-		// something
-		((Album) albumsList.getSelectionModel().getSelectedItems()).setName(albumField.getText());
-		albumField.clear();
+		Album albumToEdit = albumsList.getSelectionModel().getSelectedItem();
+		if (albumToEdit == null) {
+			Alert alert0 = new Alert(AlertType.ERROR);
+			alert0.setTitle("User Dashboard Error");
+			alert0.setHeaderText("No Album Selected");
+			alert0.setContentText("Please select an album to delete.");
+			alert0.showAndWait();
+			return;
+		}
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("User Dashboard");
+		dialog.setHeaderText("Rename Album ");
+		dialog.setContentText("Please enter new album name:");
+		Optional<String> result = dialog.showAndWait();
+		String albumName = result.get();
+		Album newAlbum = new Album(albumName);
+		if(albumAlreadyExists(newAlbum)) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Create Album Error");
+			alert.setHeaderText("Album Name Taken");
+			alert.setContentText("Entered album name already exists. Please add a different album name.");
+			alert.showAndWait();
+			return;
+		} else {
+			albumToEdit.setName(albumName);
+			Alert alert1 = new Alert(AlertType.INFORMATION);
+			alert1.setTitle("User Dashboard Confirmation");
+			alert1.setHeaderText("Album Renamed");
+			alert1.setContentText("Album has been successfully");
+			alert1.showAndWait();
+		}
 		Helper.writeUsersToDisk(users);
+		Start(user, users);
 	}
 	public void handleDeleteAlbumButton(ActionEvent event) {
 		// delete albumToDelete from Album arraylist
@@ -126,19 +166,11 @@ public class UserController {
 			alert1.setTitle("User Dashboard Confirmation");
 			alert1.setHeaderText("Album deleted");
 			alert1.setContentText("Album " + album.getName() + " was deleted");
+			alert1.showAndWait();
 		}
 		Helper.writeUsersToDisk(users);
 	}
 
-	public boolean albumAlreadyExists(Album newAlbum){
-        for (Album a : user.getAlbums()) {
-            if (a.equals(newAlbum)) {
-                return true;
-            }
-        }
-        return false;
-    }
-	
 	public void handleAddAlbumButton(ActionEvent event) {
 		// create an album instance, add to album arraylist
 		// probably redirect to AlbumDashboard

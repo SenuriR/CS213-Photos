@@ -231,6 +231,8 @@ public class PhotoSearchController {
         }
         return false;
     }
+
+    // getting an error here, it seems as though we not truly deep copying the photo, just another instance of it
     public void handleCreateAlbumFromResults(ActionEvent event) {
         // handle create album from results
         if(photoList != null) {
@@ -250,7 +252,7 @@ public class PhotoSearchController {
                 return;
             } else {
                 user.getAlbums().add(newAlbum);
-                for (Photo p : photoList) {
+                for (Photo p : photoList){
                     newAlbum.getPhotos().add(p);
                 }
                 Alert alert1 = new Alert(AlertType.INFORMATION);

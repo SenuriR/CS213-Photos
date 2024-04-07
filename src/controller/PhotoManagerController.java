@@ -16,6 +16,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -40,9 +41,11 @@ public class PhotoManagerController {
     @FXML
     Label albumName;
     @FXML
-    Button logout, addPhoto, deletePhoto, editCaption, addTag, removeTag;
+    Button logout, addPhoto, deletePhoto, addTag, removeTag, movePhoto, copyPhoto;
     @FXML
-    TextField tagField, captionField;
+    TextField tagField;
+    @FXML
+    ChoiceBox albumMove, albumCopy;
     @FXML
     ListView photoList;
     private User user;
@@ -60,8 +63,69 @@ public class PhotoManagerController {
         this.albumName.setText(album.getName());
         photoList.setItems(FXCollections.observableArrayList(photos));
         photoList.setCellFactory(param -> new PhotoListCell());
+        albumMove.getItems().addAll(user.getAlbums());
+        albumCopy.getItems().addAll(user.getAlbums());
     }
-
+    public void movePhoto(ActionEvent event) {
+        Photo photoSelected = (Photo) photoList.getSelectionModel().getSelectedItem(); // double check if this correct
+		if (photoSelected == null) {
+			Alert alert0 = new Alert(AlertType.ERROR);
+			alert0.setTitle("Album Dashboard Error");
+			alert0.setHeaderText("No Photo Selected");
+			alert0.setContentText("Please select a photo to move.");
+			alert0.showAndWait();
+			return;
+		} else {
+            if((albumMove.getValue() == null)) {
+                Alert alert0 = new Alert(AlertType.ERROR);
+                alert0.setTitle("Album Dashboard Error");
+                alert0.setHeaderText("Album Destination Not Selected");
+                alert0.setContentText("Please verify that album destination is chosen for move.");
+                alert0.showAndWait();
+                return;
+            }
+            album.getPhotos().remove(photoSelected);
+            ((Album) (albumMove.getValue())).getPhotos().add(photoSelected);
+            Alert alert1 = new Alert(AlertType.INFORMATION);
+            alert1.setTitle("Move Photo");
+            alert1.setHeaderText("Move Photo Confirmation");
+            alert1.setContentText("Photo successfuly moved to: " + albumCopy.getValue().toString());
+            alert1.showAndWait();
+            Helper.writeUsersToDisk(users);
+            photoList.refresh();
+            // albumMove.getValue() is the destination album
+        }
+    }
+    
+    public void copyPhoto(ActionEvent event) {
+        Photo photoSelected = (Photo) photoList.getSelectionModel().getSelectedItem(); // double check if this correct
+		if (photoSelected == null) {
+			Alert alert0 = new Alert(AlertType.ERROR);
+			alert0.setTitle("Album Dashboard Error");
+			alert0.setHeaderText("No Photo Selected");
+			alert0.setContentText("Please select a photo to copy.");
+			alert0.showAndWait();
+			return;
+		} else {
+            if((albumCopy.getValue() == null)) {
+                Alert alert0 = new Alert(AlertType.ERROR);
+                alert0.setTitle("Album Dashboard Error");
+                alert0.setHeaderText("Album Destination Not Selected");
+                alert0.setContentText("Please verify that album destination is chosen for copy.");
+                alert0.showAndWait();
+                return;
+            }
+            ((Album) (albumCopy.getValue())).getPhotos().add(photoSelected);
+            Alert alert1 = new Alert(AlertType.INFORMATION);
+            alert1.setTitle("Copy Photo");
+            alert1.setHeaderText("Copy Photo Confirmation");
+            alert1.setContentText("Photo successfuly copied to: " + albumCopy.getValue().toString());
+            alert1.showAndWait();
+            Helper.writeUsersToDisk(users);
+            photoList.refresh();
+            // albumMove.getValue() is the destination album
+        }
+    }
     public void removeSelectedTag(ActionEvent event) { // I don't think this is necessary in the album view
         String tagName;
         String tagValue;
@@ -92,17 +156,6 @@ public class PhotoManagerController {
         tags.add(tagToAdd);
         Helper.writeUsersToDisk(users);
         photoList.refresh();
-    }
-
-    public void editCaption(ActionEvent event) {
-        // handle edit caption
-        String caption = captionField.getText();
-        Photo photo = (Photo) photoList.getSelectionModel().getSelectedItem();
-        photo.setCaption(caption);
-        captionField.clear();
-        photoList.refresh();
-        Helper.writeUsersToDisk(users);
-        
     }
     
     public void deletePhoto(ActionEvent event) {
@@ -175,6 +228,7 @@ public class PhotoManagerController {
         if (chosenFile != null) {
             Image imageToAdd = new Image(chosenFile.toURI().toString());
             String name = chosenFile.getName();
+            System.out.println(name);
             Calendar date = Calendar.getInstance();
             date.setTimeInMillis(chosenFile.lastModified());
             Photo photoToAdd = new Photo(name, imageToAdd, date);
@@ -216,6 +270,7 @@ public class PhotoManagerController {
         }
 					
     }
+
     public void handleLogout(ActionEvent event) {
         // handle logout
         try {
