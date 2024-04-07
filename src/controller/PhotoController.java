@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import model.Photo;
 import model.Tag;
 import util.Helper;
+import util.PhotoListCell;
 import model.Album;
 import model.Tag;
 import model.User;
@@ -59,6 +60,7 @@ public class PhotoController {
         String dateString = dateFormat.format((photo.getDate()).getTime());
         this.dateTakenText.setText(dateString);
         this.indexOfPhoto = (album.getPhotos()).indexOf(photo);
+        this.imageView.setImage(photo.getImage());
     }
     
     public void handleEditCaption(ActionEvent event) {
