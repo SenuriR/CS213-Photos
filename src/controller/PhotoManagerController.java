@@ -63,10 +63,21 @@ public class PhotoManagerController {
     }
 
     public void removeSelectedTag(ActionEvent event) { // I don't think this is necessary in the album view
-        // handle remove selected tag
-        String tagToRemove = tagField.getText();
-        // access current photo
-
+        String tagName;
+        String tagValue;
+        String[] info = tagField.getText().split(":");
+        tagName = info[0];
+        tagValue = info[1];
+        Photo photo = (Photo) photoList.getSelectionModel().getSelectedItem();
+        this.tags = photo.getTags();
+        Tag tagToRemove = new Tag(tagName, tagValue);
+        for (Tag tag : tags) {
+            if (tag.equals(tagToRemove)) {
+                tags.remove(tag);
+            }
+        }
+        Helper.writeUsersToDisk(users);
+        photoList.refresh();
     }
 
     public void addTag(ActionEvent event) { // I don't think this is necessary as well - the editing of tags should be excluded to the individual photo view only
@@ -74,24 +85,13 @@ public class PhotoManagerController {
         String tagValue;
         String[] info = tagField.getText().split(":");
         tagName = info[0];
-        if (info.length == 2 ) {
-            tagName = info[0].trim();
-            tagValue = info[1].trim();
-        } else {
-            Alert alert0 = new Alert(AlertType.ERROR);
-			alert0.setTitle("Tag Input Error");
-			alert0.setHeaderText("Wrong Tag Format");
-			alert0.setContentText("Please enter tag in format: [tag name]: [tag value]");
-			alert0.showAndWait();
-			return;
-        }
-
+        tagValue = info[1];
         Photo photo = (Photo) photoList.getSelectionModel().getSelectedItem();
         this.tags = photo.getTags();
         Tag tagToAdd = new Tag(tagName, tagValue);
         tags.add(tagToAdd);
-        photoList.refresh();
         Helper.writeUsersToDisk(users);
+        photoList.refresh();
     }
 
     public void editCaption(ActionEvent event) {
@@ -142,7 +142,7 @@ public class PhotoManagerController {
             PhotoController controller = loader.<PhotoController>getController();
             Scene scene = new Scene(root);
             Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            controller.Start(photoSelected, album);
+            controller.Start(photoSelected, album, users, user);
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {

@@ -39,7 +39,8 @@ public class PhotoListCell extends ListCell<Photo> {
                 imageView.setImage(image);
                 imageView.setFitWidth(THUMBNAIL_WIDTH);
                 imageView.setFitHeight(THUMBNAIL_HEIGHT);
-                setText(photo.getCaption());
+                String text = "Caption: " + photo.getCaption() + " Tag(s): " + photo.getTags();
+                setText(text);
             }
             setGraphic(imageView);
         }
