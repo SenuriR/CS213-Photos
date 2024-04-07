@@ -43,11 +43,15 @@
                 <GridPane hgap="10" vgap="10">
                     <Label text="Photo name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                     <Label fx:id="photoNameText" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                    <Label text="Caption:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <Label fx:id="captionText" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                     <Label text="Date taken:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                     <Label fx:id="dateTakenText" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 </GridPane>
+                <HBox spacing="15">
+                     <Label text="Caption:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                     <Label fx:id="captionText" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                     <Button fx:id="editCaptionButton" text="Edit Caption" onAction="#handleEditCaption" />
+                     <TextField fx:id="captionField" promptText="Edit Caption..." />
+                  </HBox>
                 <HBox spacing="10">
                     <TextField fx:id="tagTypeField" promptText="Tag Type"/>
                     <TextField fx:id="tagValueField" promptText="Tag Value"/>
