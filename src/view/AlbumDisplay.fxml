@@ -19,8 +19,6 @@
          <children>
             <Button fx:id="addPhoto" text="Add Photo" onAction="#addPhoto" />
             <Button fx:id="deletePhoto" text="Delete Selected Photo" onAction="#deletePhoto" />
-            <Button fx:id="editCaption" text="Edit Caption" onAction="#editCaption" />
-            <TextField fx:id="captionField" promptText="Caption" />
          </children>
       </HBox>
       <!-- Tag Management -->
@@ -35,6 +33,22 @@
       <HBox spacing="5">
          <children>
             <Button fx:id="openPhoto" text="Open Photo" onAction="#openSelectedPhoto" />
+         </children>
+      </HBox>
+      <!-- MOVE photo-->
+      <HBox spacing="5">
+         <children>
+            <Label text="Move Photo:" />
+            <ChoiceBox fx:id="albumMove" prefWidth="120.0" prefHeight="25.0"/>
+            <Button fx:id="movePhoto" text="Move Photo" onAction="#movePhoto" />
+         </children>
+      </HBox>
+      <!-- COPY photo-->
+      <HBox spacing="5">
+         <children>
+            <Label text="Copy Photo:" />
+            <ChoiceBox fx:id="albumCopy" prefWidth="120.0" prefHeight="25.0"/>
+            <Button fx:id="copyPhoto" text="Copy Photo" onAction="#copyPhoto" />
          </children>
       </HBox>
       <!-- Photo List/Display -->

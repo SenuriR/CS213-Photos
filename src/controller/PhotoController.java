@@ -116,10 +116,16 @@ public class PhotoController {
         }
     }
     public void handlePreviousButton(ActionEvent event) {
+        if (indexOfPhoto == 0) {
+            backButton.setDisable(true);
+        }
         changePhoto(event, indexOfPhoto-1);
     }
 
     public void handleNextButton(ActionEvent event) {
+        if (indexOfPhoto == album.getPhotos().size()-1) {
+            nextButton.setDisable(true);
+        }
         changePhoto(event, indexOfPhoto+1);
     }
     
