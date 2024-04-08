@@ -25,6 +25,14 @@ import java.util.Calendar;
 import model.User;
 import util.Helper;
 
+/**
+ * The LoginController class handles the login process and initial data setup for the application.
+ * It provides functionality to authenticate users, create initial data files if they don't exist,
+ * and redirect to the correct dashboard based on the user type (admin or regular user).
+ * 
+ * @author Isham Khan and Senuri Rupasinghe
+ */
+
 
 public class LoginController {
 	@FXML
@@ -33,6 +41,13 @@ public class LoginController {
 	private TextField usernameField;
 	ArrayList<User> users;
 	User user;
+
+	/**
+     * This method initializes the LoginController class. It is called when the login screen is first presented.
+     * This method may not be necessary if the stage is passed as a parameter from the main application.
+     * 
+     * @param stage The primary stage of the application
+     */
 
 	public void start(Stage stage) {
 		// don't think we need anything here, because we are getting the stage as an input from main photo app
@@ -75,6 +90,14 @@ public class LoginController {
 			System.err.println("Folder is empty or does not exist");
 		 }
 	}
+	 /**
+     * Handles the login process when the login button is pressed. It checks if the data file exists, creates it if not,
+     * reads user data from the file, and authenticates the username entered in the usernameField.
+     * If the username is 'admin', it redirects to the admin dashboard. Otherwise, it loads the user dashboard
+     * or prompts for user creation if the username does not exist.
+     * 
+     * @param event The action event generated when the login button is pressed
+     */
 	public void handleLoginButton(ActionEvent event){
 		File dataFile = new File("data/data.dat");
 		String username = usernameField.getText(); // extract string form of username
@@ -122,7 +145,12 @@ public class LoginController {
 			e.printStackTrace();
 		}		
 	}
-
+ /**
+     * Redirects to the admin dashboard screen. This method loads the AdminDashboard.fxml file, initializes the scene,
+     * and switches to the new scene on the existing stage.
+     * 
+     * @param event The action event generated when the redirection to the admin dashboard is needed.
+     */
 	public void redirectToAdmin(ActionEvent event) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminDashboard.fxml"));
@@ -139,3 +167,12 @@ public class LoginController {
 		
 	}
 }
+/**
+     * Redirects the user to the administration dashboard view upon invocation. 
+     * This method is called when an administrator needs to access the admin panel, typically after 
+     * successful authentication or when the user requests to switch to the admin view manually.
+     * It loads the AdminDashboard.fxml file, sets up the controller, and changes the scene on the 
+     * current stage to the admin dashboard view.
+     * 
+     * @param event The ActionEvent triggered by the user action which calls for redirection to the admin dashboard.
+     */
