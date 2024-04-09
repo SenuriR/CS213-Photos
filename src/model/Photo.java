@@ -46,7 +46,7 @@ public class Photo implements Serializable {
 		this.caption = "";
 		this.image = new SerializableImage(image);
 		this.date = date;
-		this.tags = new ArrayList<Tag>();
+		this.tags = setStarterTags();
 		this.date.set(Calendar.MILLISECOND, 0);
 	}
 
@@ -56,6 +56,17 @@ public class Photo implements Serializable {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	public ArrayList<Tag> setStarterTags() {
+		ArrayList<Tag> tagsStarter = new ArrayList<>();
+		Tag locationNameTag = new Tag("Location", "");
+		Tag personNameTag = new Tag("Person", "");
+		Tag activityNameTag = new Tag("Activity", "");
+		tagsStarter.add(locationNameTag);
+		tagsStarter.add(personNameTag);
+		tagsStarter.add(activityNameTag);
+		return tagsStarter;
 	}
 
 	/**
@@ -81,23 +92,7 @@ public class Photo implements Serializable {
 	public ArrayList<Tag> getTags() {
 		return tags;
 	}
-
-	public ArrayList<String> getTagNames() {
-		List<String> tagNames = new ArrayList<>();
-        for (Tag tag : tags) {
-            tagNames.add(tag.getName());
-        }
-		return tagNames;
-	}
-
-	public ArrayList<String> getTagValues() {
-		List<String> tagValues = new ArrayList<>();
-        for (Tag tag : tags) {
-            tagValues.add(tag.getValue());
-        }
-		return tagValues;
-	}
-
+	
 	/**
 	 * Returns the last modified date of this photo
 	 * @return the last modified date of this photo

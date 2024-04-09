@@ -5,7 +5,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UserController">
+<BorderPane prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UserController">
    <top>
       <VBox prefHeight="120.0" prefWidth="480.0" style="-fx-padding: 10px 20px;">
          <children>
@@ -18,19 +18,20 @@
                <Pane HBox.hgrow="ALWAYS" />
                <Button fx:id="logOutButton" onAction="#handleLogOutButton" text="Log out"/>
             </HBox>
-            <GridPane hgap="10" vgap="10">
+            <GridPane hgap="10" vgap="10" alignment="CENTER">
                <Label text="Album name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-               <TextField fx:id="albumField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-               <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                  <Button fx:id="addAlbumButton" onAction="#handleAddAlbumButton" text="Add Album" />
+               <!-- Use an HBox to align albumField and addAlbumButton -->
+               <HBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="10">
+                  <TextField fx:id="albumField" />
+                  <Button fx:id="addAlbumButton" onAction="#handleAddAlbumButton" text="Create Album" />
+               </HBox>
+               <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER">
                   <Button fx:id="deleteAlbumButton" onAction="#handleDeleteAlbumButton" text="Delete Album" />
                   <Button fx:id="renameAlbumButton" onAction="#handleRenameAlbumButton" text="Rename Album" />
                   <Button fx:id="openAlbumButton" onAction="#handleOpenAlbumButton" text="Open Album" />
                   <Button fx:id="searchPhotosButton" onAction="#handleSearchPhotosButton" text="Search Photos" />
                </HBox>
                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2" alignment="CENTER_RIGHT">
-                  <Button fx:id="confirmButton" onAction="#handleConfirmButton" text="Confirm" />
-                  <Button fx:id="cancelButton" onAction="#handleCancelButton" text="Cancel" />
                </HBox>
             </GridPane>
          </children>

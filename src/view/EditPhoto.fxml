@@ -6,12 +6,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PhotoController">
+<BorderPane prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EditPhotoController">
     <top>
         <HBox prefHeight="50.0" spacing="20" alignment="CENTER" style="-fx-background-color: #EEE;">
             <children>
                 <Button fx:id="backButton" text="Back" onAction="#handleBackButton"/>
-                <Label text="Photo View" style="-fx-font-size: 20px; -fx-text-fill: #333;">
+                <Label text="Edit Photo" style="-fx-font-size: 20px; -fx-text-fill: #333;">
                     <font>
                         <Font name="System Bold" size="20.0" />
                     </font>
@@ -36,10 +36,6 @@
                 <Insets top="15" right="15" bottom="15" left="15"/>
             </padding>
             <children>
-                <HBox spacing="15">
-                    <Button fx:id="previousButton" text="Previous" onAction="#handlePreviousButton"/>
-                    <Button fx:id="nextButton" text="Next" onAction="#handleNextButton"/>
-                </HBox>
                 <GridPane hgap="10" vgap="10">
                     <Label text="Photo name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                     <Label fx:id="photoNameText" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
@@ -49,9 +45,15 @@
                 <HBox spacing="15">
                      <Label text="Caption:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                      <Label fx:id="captionText" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                     <Button fx:id="editCaptionButton" text="Edit Caption" onAction="#handleEditCaption" />
+                     <TextField fx:id="captionField" promptText="Edit Caption..." />
                   </HBox>
-                  <HBox spacing="15">
-                    <Label text="Tags:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <HBox spacing="10">
+                    <TextField fx:id="tagTypeField" promptText="Tag Type"/>
+                    <TextField fx:id="tagValueField" promptText="Tag Value"/>
+                    <Button fx:id="addTagButton" text="Add" onAction="#handleAddTagButton"/>
+                    <Button fx:id="deleteTagButton" text="Delete" onAction="#handleDeleteTagButton"/>
+                    <Button fx:id="editExistingTag" text="Edit Existing Tag" onAction="#handleEditTag"/>
                 </HBox>
                 <ListView fx:id="tagsList" prefHeight="100.0"/>
             </children>
