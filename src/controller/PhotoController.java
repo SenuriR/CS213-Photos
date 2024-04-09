@@ -29,6 +29,14 @@ import model.Album;
 import model.Tag;
 import model.User;
 
+
+/**
+ * The PhotoController class manages the interactions within the photo view in the application.
+ * It allows the user to navigate between photos, see photo information
+ * and log out or return to the album display.
+ * 
+ * @author Isham Khan and Senuri Rupasinghe
+ */
 public class PhotoController {
 	@FXML
     Button backButton, logoutButton, previousButton, nextButton;
@@ -45,6 +53,15 @@ public class PhotoController {
     private ArrayList<User> users;
     private int indexOfPhoto;
 
+     /**
+     * Starts the photo display view with data of the selected photo, album, and user information.
+     * It sets up the UI elements with the photo's details, tags, and initializes navigation functionality.
+     *
+     * @param photo  The photo to be displayed.
+     * @param album  The album that contains the photo.
+     * @param users  The list of all users.
+     * @param user   The current user viewing the photo.
+     */
     public void Start(Photo photo, Album album, ArrayList<User> users, User user) {
         this.user = user;
         this.users = users;
@@ -61,7 +78,12 @@ public class PhotoController {
         this.imageView.setImage(photo.getImage());
     }
     
-   
+   	/**
+     * Handles the action of the back button which returns the user to the album display.
+     * This method loads the AlbumDisplay view and passes along the necessary data.
+     *
+     * @param event The action event triggered by pressing the back button.
+     */
     public void handleBackButton(ActionEvent event) {
         // handle back button -- context of returning to album...
         try {
@@ -79,6 +101,13 @@ public class PhotoController {
     }
 
 
+    /**
+     * Changes the displayed photo in the view based on the index provided.
+     * The photo at the specified index from the album's photo list is displayed.
+     *
+     * @param event The action event triggered by navigation buttons.
+     * @param index The index of the photo to display in the album's photo list.
+     */
     public void changePhoto(ActionEvent event, int index) {
         Photo photoSelected = album.getPhotos().get(index);
         try {
@@ -94,6 +123,13 @@ public class PhotoController {
             e.printStackTrace();
         }
     }
+
+    	/**
+     * Handles the action of the previous button to navigate to the previous photo in the album.
+     * If the first photo is being displayed, this button will be disabled.
+     *
+     * @param event The action event triggered by pressing the previous button.
+     */
     public void handlePreviousButton(ActionEvent event) {
         if ((indexOfPhoto == 0)) {
             previousButton.setDisable(true);
@@ -102,6 +138,12 @@ public class PhotoController {
         }
     }
 
+    /**
+     * Handles the action of the next button to navigate to the next photo in the album.
+     * If the last photo is being displayed, this button will be disabled.
+     *
+     * @param event The action event triggered by pressing the next button.
+     */
     public void handleNextButton(ActionEvent event) {
         if ((indexOfPhoto == (album.getPhotos().size()-1))) {
             nextButton.setDisable(true);
@@ -110,6 +152,12 @@ public class PhotoController {
         }
     }
 
+    /**
+     * Handles the logout action which returns the user to the login screen.
+     * Current user state is saved before logging out.
+     *
+     * @param event The action event triggered by pressing the logout button.
+     */
     public void handleLogoutButton(ActionEvent event) {
         // handle logout
         try {

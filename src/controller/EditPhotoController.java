@@ -29,6 +29,14 @@ import model.Album;
 import model.Tag;
 import model.User;
 
+
+/**
+ * The EditPhotoController class edits a specific photo in application
+ * It allows the user to edit photo captions, add or delete tags,
+ * and log out or return to the album display.
+ * 
+ * @author Isham Khan and Senuri Rupasinghe
+ */
 public class EditPhotoController {
 	@FXML
     Button backButton, logoutButton, addTagButton, deleteTagButton, editCaptionButton, editExistingTag;
@@ -47,6 +55,16 @@ public class EditPhotoController {
     private ArrayList<User> users;
     private int indexOfPhoto;
 
+
+     /**
+     * Starts the photo display view with data of the selected photo information.
+     * It sets up the UI elements with the photo's details, tags, and initializes navigation functionality.
+     *
+     * @param photo  The photo to be displayed.
+     * @param album  The album that contains the photo.
+     * @param users  The list of all users.
+     * @param user   The current user viewing the photo.
+     */
     public void Start(Photo photo, Album album, ArrayList<User> users, User user) {
         this.user = user;
         this.users = users;
@@ -62,6 +80,13 @@ public class EditPhotoController {
         this.indexOfPhoto = (album.getPhotos()).indexOf(photo);
         this.imageView.setImage(photo.getImage());
     }
+    
+    /**
+     * Handles the editing of a photo's caption. If the caption field is empty, a confirmation dialog is shown.
+     * The photo's caption is updated and saved persistently.
+     *
+     * @param event The action event triggered by pressing the edit caption button.
+     */
     
     public void handleEditCaption(ActionEvent event) {
         String caption = captionField.getText();
@@ -83,6 +108,13 @@ public class EditPhotoController {
         this.captionText.setText(photo.getCaption());
         Helper.writeUsersToDisk(users);
     }
+
+   	/**
+     * Handles the action of the back button which returns the user to the album display.
+     * This method loads the AlbumDisplay view and passes along the necessary data.
+     *
+     * @param event The action event triggered by pressing the back button.
+     */
     public void handleBackButton(ActionEvent event) {
         // handle back button -- context of returning to album...
         try {
@@ -99,7 +131,13 @@ public class EditPhotoController {
         }
     }
 
-
+    /**
+     * Handles the action of moving between photos in an album.
+     * This method changes photo selected to next or previous photo in album, redirects to photoView.
+     *
+     * @param event The action event triggered by pressing the next or previous button.
+     * @param index Respective index of next or previous photo.
+     */
     public void changePhoto(ActionEvent event, int index) {
         Photo photoSelected = album.getPhotos().get(index);
         try {
@@ -116,6 +154,13 @@ public class EditPhotoController {
         }
     }
 
+    /**
+     * Handles the editing of a photo's tag. If the tag field is empty, a confirmation dialog is shown.
+     * The photo's tag is updated and saved persistently.
+     *
+     * @param event The action event triggered by pressing the edit tag button.
+     */
+    
     public void handleEditTag(ActionEvent event) {
         Tag tagSelected = (Tag) tagsList.getSelectionModel().getSelectedItem();
         for (Tag t : tags) {
@@ -140,6 +185,12 @@ public class EditPhotoController {
         tagsList.refresh();
     }
 
+        /**
+     * Handles adding a new tag to the photo. Checks for duplicate tags and updates the view.
+     * New tags are written to disk to update the persistent state.
+     *
+     * @param event The action event triggered by pressing the add tag button.
+     */
     public void handleAddTagButton(ActionEvent event) {
         String tagName = tagTypeField.getText().trim();
         String tagValue = tagValueField.getText().trim();
@@ -176,6 +227,12 @@ public class EditPhotoController {
         tagValueField.clear();
     }
 
+     /**
+     * Handles the deletion of a selected tag from the photo. If no tag is selected, an error alert is shown.
+     * Updates are written to disk to update the persistent state.
+     *
+     * @param event The action event triggered by pressing the delete tag button.
+     */
     public void handleDeleteTagButton(ActionEvent event) {
         Tag tagToRemove = (Tag) tagsList.getSelectionModel().getSelectedItem();
         if (tagToRemove != null) {
@@ -193,6 +250,12 @@ public class EditPhotoController {
         tagsList.refresh();
     }
 
+    /**
+     * Handles the logout action which returns the user to the login screen.
+     * Current user state is saved before logging out.
+     *
+     * @param event The action event triggered by pressing the logout button.
+     */
     public void handleLogoutButton(ActionEvent event) {
         // handle logout
         try {
