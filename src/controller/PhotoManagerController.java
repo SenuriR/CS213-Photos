@@ -36,7 +36,12 @@ import model.Photo;
 import model.Tag;
 import util.PhotoListCell;
 
-// controller for AlbumDisplay.fxml
+/**
+ * The PhotoManagerController class shows all albums for a specified user.
+ * It allows the user to view albums and perform edit album operations
+ * 
+ * @author Isham Khan and Senuri Rupasinghe
+ */
 public class PhotoManagerController {
     @FXML
     Label albumName;
@@ -51,6 +56,15 @@ public class PhotoManagerController {
     private ArrayList<Photo> photos;
     private Album album;
     private ArrayList<Tag> tags;
+
+    /**
+     * Starts the album display view with data of the selected photo information.
+     * It sets up the UI elements with the albums's details, tags, and initializes navigation functionality.
+     *
+     * @param album  The album that contains the photo.
+     * @param users  The list of all users.
+     * @param user   The current user viewing the photo.
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void Start(User user, Album album, ArrayList<User> users) {
         // handle start
@@ -95,6 +109,11 @@ public class PhotoManagerController {
         }
     }
     
+    /**
+     * Handles the the copying of a selected photo from one album to another.
+     *
+     * @param event The action event triggered by pressing the edit copyPhoto button.
+     */    
     public void copyPhoto(ActionEvent event) {
         Photo photoSelected = (Photo) photoList.getSelectionModel().getSelectedItem(); // double check if this correct
 		if (photoSelected == null) {
@@ -125,6 +144,12 @@ public class PhotoManagerController {
         }
     }
 
+    /**
+     * Handles the editing of a photo's properites. Redirects to EditPhoto.
+     *
+     * @param event The action event triggered by pressing the edit photo button.
+     */
+    
     public void editPhotoProperties(ActionEvent event) {
         Photo photoSelected = (Photo) photoList.getSelectionModel().getSelectedItem(); // double check if this correct
 		if (photoSelected == null) {
@@ -149,6 +174,11 @@ public class PhotoManagerController {
         }
     }
 
+    /**
+     * Deletes selected photo from album. Refreshes album photos list.
+     *
+     * @param event The action event triggered by pressing the delete photo button.
+     */
     
     public void deletePhoto(ActionEvent event) {
         // handle delte photo
@@ -180,6 +210,12 @@ public class PhotoManagerController {
         Helper.writeUsersToDisk(users);
         Helper.readUsersFromDisk(users);
     }
+
+    /**
+     * Opens a selected photo. Redirects to photo view for simple view of photo.
+     *
+     * @param event The action event triggered by pressing the open selected photo button.
+     */
     
     public void openSelectedPhoto(ActionEvent event) {
         Photo photoSelected = (Photo) photoList.getSelectionModel().getSelectedItem(); // double check if this correct
@@ -204,6 +240,13 @@ public class PhotoManagerController {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Add photo to album. Utilizes fileChooser that specifies acceptable file formats.
+     *
+     * @param event The action event triggered by pressing the add photo button.
+     */
+    
     public void addPhoto(ActionEvent event) {
         // handle add photos
         FileChooser chooser = new FileChooser();
@@ -251,6 +294,12 @@ public class PhotoManagerController {
         }
     }
 
+    /**
+     * Checks user's existing photos to ensure duplicate photo not added to album.
+     *
+     * @param photo photo requested to add.
+     */
+    
     public Boolean checkIfDuplicate(Photo photo) {
         for (Photo photoIter : photos) {
             if (photoIter.equals(photo)) {
@@ -266,6 +315,13 @@ public class PhotoManagerController {
         }
         return false;
     }
+
+    /**
+     * Handles the action of the back button which returns the user to the user display.
+     * This method loads the User Dashboard view and passes along the necessary data.
+     *
+     * @param event The action event triggered by pressing the back button.
+     */
     public void handleBack(ActionEvent event) {
         // handle back (to User Dash)
         try {
@@ -283,6 +339,12 @@ public class PhotoManagerController {
 					
     }
 
+    /**
+     * Handles the logout action which returns the user to the login screen.
+     * Current user state is saved before logging out.
+     *
+     * @param event The action event triggered by pressing the logout button.
+     */
     public void handleLogout(ActionEvent event) {
         // handle logout
         try {
