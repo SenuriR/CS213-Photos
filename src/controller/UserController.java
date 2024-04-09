@@ -24,6 +24,13 @@ import model.User;
 import util.Helper;
 import model.Album;
 
+
+/**
+ * The UserController class shows user specific albums.
+ * It allows the user to view albums and perform edit album operations
+ * 
+ * @author Isham Khan and Senuri Rupasinghe
+ */
 public class UserController {
 	private User user;
 	private ArrayList<Album> userAlbums;
