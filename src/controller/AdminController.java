@@ -22,6 +22,14 @@ import util.Helper;
 import javafx.scene.control.ButtonType;
 import java.util.Optional;
 
+/**
+ * The AdminController class manages the administration functionalities within the application.
+ * It allows an admin user to add, remove, and list users, and provides the option to log out.
+ * The admin interface is interacted with via JavaFX controls.
+ * 
+ * @author Isham Khan and Senuri Rupasinghe
+ */
+
 public class AdminController {
 	private ArrayList<User> users;
 	@FXML
@@ -30,21 +38,41 @@ public class AdminController {
 	private ListView<User> userListView;
 	@FXML
 	private Button confirmUserAction, cancelUserAction, addUserButton, removeUserButton, showUserButton, logoutButton;
-
+  /**
+     * Initializes the admin controller with a list of users.
+     * This method prepares the controller to manage user data.
+     * 
+     * @param users The list of users to be managed.
+     */
 	public void start(ArrayList<User> users) {
 		// initialization stuff
 		this.users = users;
 
 	}
-	
+	 /**
+     * Handles the confirmation action within the admin interface.
+     * The specific action to be confirmed is to be implemented according to application requirements.
+     * 
+     * @param event The event that triggered this action.
+     */
 	public void handleConfirmAction(ActionEvent event) {
 		// not sure what to do here
 	}
-
+ /**
+     * Handles the cancellation action within the admin interface.
+     * The specific action to be canceled is to be implemented according to application requirements.
+     * 
+     * @param event The event that triggered this action.
+     */
 	public void handleCancelAction(ActionEvent event) {
 		// not sure what to do here
 	}
-
+ /**
+     * Handles adding a new user to the application.
+     * Checks for non-empty and unique usernames before creating a new user and updating the list view.
+     * 
+     * @param event The event that triggered the addition of a new user.
+     */
 	public void handleAddUser(ActionEvent event) {
 		
 		// get string version of usernameField
@@ -81,6 +109,12 @@ public class AdminController {
 		usernameField.clear();
 		userListView.getItems().add(newUser);		
 	}
+	/**
+     * Handles the removal of a selected user from the application.
+     * Ensures a user is selected and confirmed for deletion before proceeding.
+     * 
+     * @param event The event that triggered the removal of a user.
+     */
 
 	public void handleRemoveUser(ActionEvent event) {
 		User userToDelete = userListView.getSelectionModel().getSelectedItem();
@@ -108,7 +142,12 @@ public class AdminController {
 			userListView.getItems().remove(userToDelete);
 		}
 	}
-
+ /**
+     * Displays the list of users in the application.
+     * If no users exist, it displays an informative message.
+     * 
+     * @param event The event that triggered the display of user list.
+     */
 	public void handleShowUsers(ActionEvent event) {
 		// show ArrayList<User> users on screen
 		if (users != null && !users.isEmpty()) {
@@ -122,7 +161,12 @@ public class AdminController {
 			alert.showAndWait();
 		}
 	}
-
+  /**
+     * Handles the logout process for the admin.
+     * Writes the current state of users to disk and redirects to the login screen.
+     * 
+     * @param event The event that triggered the logout action.
+     */
 	public void handleLogout(ActionEvent event) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginScreen.fxml"));
