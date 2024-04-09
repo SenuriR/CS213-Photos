@@ -257,7 +257,6 @@ public class PhotoSearchController {
                         for (Photo pFromPhotos : a.getPhotos()) {
                             if (p.equals(pFromPhotos)) {
                                 p = pFromPhotos;
-                                System.out.println("INSIDE P");
                             }
                         }
                     }

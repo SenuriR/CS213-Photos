@@ -143,6 +143,17 @@ public class EditPhotoController {
     public void handleAddTagButton(ActionEvent event) {
         String tagName = tagTypeField.getText().trim();
         String tagValue = tagValueField.getText().trim();
+        if(tagName.equals("") || tagValue.equals("")) {
+            Alert alert0 = new Alert(AlertType.ERROR);
+            alert0.setTitle("Edit Photo Error");
+            alert0.setHeaderText("Tag Input");
+            alert0.setContentText("Please verify that both tag typ and tag value fields are filled in.");
+            alert0.showAndWait();
+            tagTypeField.clear();
+            tagValueField.clear();
+            Start(photo, album, users, user);
+            return;
+        }
         Tag tagToAdd = new Tag(tagName, tagValue);
         for (Tag tag : tags) {
             if ((tag.getValue().toUpperCase()).equals(tagToAdd.getValue().toUpperCase()) || (tag.getName().toUpperCase().equals("LOCATION") && tagToAdd.getName().toUpperCase().equals("LOCATION"))) {
@@ -153,6 +164,7 @@ public class EditPhotoController {
                 alert0.showAndWait();
                 tagTypeField.clear();
                 tagValueField.clear();
+                Start(photo, album, users, user);
                 return;
             }
         }
