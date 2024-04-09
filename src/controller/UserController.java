@@ -99,7 +99,7 @@ public class UserController {
 			Alert alert0 = new Alert(AlertType.ERROR);
 			alert0.setTitle("User Dashboard Error");
 			alert0.setHeaderText("No Album Selected");
-			alert0.setContentText("Please select an album to delete.");
+			alert0.setContentText("Please select an album to rename.");
 			alert0.showAndWait();
 			return;
 		}

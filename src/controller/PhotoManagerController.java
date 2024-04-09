@@ -224,10 +224,21 @@ public class PhotoManagerController {
                 Calendar date = Calendar.getInstance();
                 date.setTimeInMillis(chosenFile.lastModified());
                 Photo photoToAdd = new Photo(name, imageToAdd, date);
-                checkIfDuplicate(photoToAdd);
-                photos.add(photoToAdd);
-                photoList.setItems(FXCollections.observableArrayList(photos));
-                Helper.writeUsersToDisk(users);
+                
+                if (checkIfDuplicate(photoToAdd) == true) {
+                    return;
+                } else {
+                    photos.add(photoToAdd);
+                    photoList.setItems(FXCollections.observableArrayList(photos));
+                    Helper.writeUsersToDisk(users);
+                }
+            } else {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Album Dashboard Error");
+                alert.setHeaderText("Photo Add Error");
+                alert.setContentText("Error in uploading photo. Check file type.");
+                alert.showAndWait();
+                return;
             }
         } catch (Exception e) {
             // e.printStackTrace();
@@ -240,7 +251,7 @@ public class PhotoManagerController {
         }
     }
 
-    public void checkIfDuplicate(Photo photo) {
+    public Boolean checkIfDuplicate(Photo photo) {
         for (Photo photoIter : photos) {
             if (photoIter.equals(photo)) {
                 // System.out.println(photoIter.getName());
@@ -248,11 +259,12 @@ public class PhotoManagerController {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Album Dashboard Error");
                 alert.setHeaderText("Photo Add Error");
-                alert.setContentText("Cannot add duplicate photo. Please change name of photo if you would still like to add photo.");
+                alert.setContentText("Cannot add duplicate photo.");
                 alert.showAndWait();
-                return;
+                return true;
             }
         }
+        return false;
     }
     public void handleBack(ActionEvent event) {
         // handle back (to User Dash)

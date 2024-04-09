@@ -92,6 +92,14 @@ public class AdminController {
 			alert.showAndWait();
 			return;
 		}
+		if (userToDelete.getUsername().toUpperCase().equals("ADMIN")) {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Attempt to Delete Admin");
+			alert.setHeaderText("Delete Admin");
+			alert.setContentText("Cannot delete admin");
+			alert.showAndWait();
+			return;
+		}
 
 		// confirm userToDelete is intended
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
