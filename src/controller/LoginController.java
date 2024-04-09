@@ -43,7 +43,7 @@ public class LoginController {
 			Album stockAlbum = new Album("stock");
 			File photo;
 			 // Specify the folder path
-			 File folder = new File("data");
+			 File folder = new File("data/stock_images");
 
 			 // List files in the folder
 			 File[] files = folder.listFiles();
@@ -114,9 +114,8 @@ public class LoginController {
 				Alert alert = new Alert(Alert.AlertType.ERROR);
 				alert.setTitle("User Does Not Exist");
 				alert.setHeaderText(null);
-				alert.setContentText("User does not exist. Please create a user through admin.");
+				alert.setContentText("User does not exist. Please check spelling or create user through admin.");
 				alert.showAndWait();
-				redirectToAdmin(event);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

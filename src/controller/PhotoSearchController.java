@@ -253,6 +253,14 @@ public class PhotoSearchController {
             } else {
                 user.getAlbums().add(newAlbum);
                 for (Photo p : photoList){
+                    for (Album a : user.getAlbums()) {
+                        for (Photo pFromPhotos : a.getPhotos()) {
+                            if (p.equals(pFromPhotos)) {
+                                p = pFromPhotos;
+                                System.out.println("INSIDE P");
+                            }
+                        }
+                    }
                     newAlbum.getPhotos().add(p);
                 }
                 Alert alert1 = new Alert(AlertType.INFORMATION);

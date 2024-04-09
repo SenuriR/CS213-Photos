@@ -41,9 +41,7 @@ public class PhotoManagerController {
     @FXML
     Label albumName;
     @FXML
-    Button logout, addPhoto, deletePhoto, addTag, removeTag, movePhoto, copyPhoto;
-    @FXML
-    TextField tagField;
+    Button logout, addPhoto, deletePhoto, movePhoto, copyPhoto, editPhotoProperties;
     @FXML
     ChoiceBox albumMove, albumCopy;
     @FXML
@@ -89,7 +87,7 @@ public class PhotoManagerController {
             Alert alert1 = new Alert(AlertType.INFORMATION);
             alert1.setTitle("Move Photo");
             alert1.setHeaderText("Move Photo Confirmation");
-            alert1.setContentText("Photo successfuly moved to: " + albumCopy.getValue().toString());
+            alert1.setContentText("Photo successfuly moved to: " + albumMove.getValue().toString());
             alert1.showAndWait();
             Helper.writeUsersToDisk(users);
             photoList.refresh();
@@ -126,37 +124,31 @@ public class PhotoManagerController {
             // albumMove.getValue() is the destination album
         }
     }
-    public void removeSelectedTag(ActionEvent event) { // I don't think this is necessary in the album view
-        String tagName;
-        String tagValue;
-        String[] info = tagField.getText().split(":");
-        tagName = info[0];
-        tagValue = info[1];
-        Photo photo = (Photo) photoList.getSelectionModel().getSelectedItem();
-        this.tags = photo.getTags();
-        Tag tagToRemove = new Tag(tagName, tagValue);
-        for (Tag tag : tags) {
-            if (tag.equals(tagToRemove)) {
-                tags.remove(tag);
-            }
+
+    public void editPhotoProperties(ActionEvent event) {
+        Photo photoSelected = (Photo) photoList.getSelectionModel().getSelectedItem(); // double check if this correct
+		if (photoSelected == null) {
+			Alert alert0 = new Alert(AlertType.ERROR);
+			alert0.setTitle("Album Dashboard Error");
+			alert0.setHeaderText("No Photo Selected");
+			alert0.setContentText("Please select a photo to edit.");
+			alert0.showAndWait();
+			return;
+		}
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EditPhoto.fxml"));
+            Parent root = loader.load();
+            EditPhotoController controller = loader.<EditPhotoController>getController();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            controller.Start(photoSelected, album, users, user);
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        Helper.writeUsersToDisk(users);
-        photoList.refresh();
     }
 
-    public void addTag(ActionEvent event) { // I don't think this is necessary as well - the editing of tags should be excluded to the individual photo view only
-        String tagName;
-        String tagValue;
-        String[] info = tagField.getText().split(":");
-        tagName = info[0];
-        tagValue = info[1];
-        Photo photo = (Photo) photoList.getSelectionModel().getSelectedItem();
-        this.tags = photo.getTags();
-        Tag tagToAdd = new Tag(tagName, tagValue);
-        tags.add(tagToAdd);
-        Helper.writeUsersToDisk(users);
-        photoList.refresh();
-    }
     
     public void deletePhoto(ActionEvent event) {
         // handle delte photo
@@ -224,19 +216,27 @@ public class PhotoManagerController {
         ExtensionFilter pngFiles = new ExtensionFilter("PNG Files", "*.png", "*.PNG");
         chooser.getExtensionFilters().addAll(imageFiles, bitMapFiles, gifFiles, jpegFiles, pngFiles);
         File chosenFile = chooser.showOpenDialog(null);
-        
-        if (chosenFile != null) {
-            Image imageToAdd = new Image(chosenFile.toURI().toString());
-            String name = chosenFile.getName();
-            System.out.println(name);
-            Calendar date = Calendar.getInstance();
-            date.setTimeInMillis(chosenFile.lastModified());
-            Photo photoToAdd = new Photo(name, imageToAdd, date);
-            checkIfDuplicate(photoToAdd);
-            photos.add(photoToAdd);
-            photoList.setItems(FXCollections.observableArrayList(photos));
-            // album.getPhotos().add(photoToAdd);
-            Helper.writeUsersToDisk(users);
+        try {
+            if (chosenFile != null) {
+                Image imageToAdd = new Image(chosenFile.toURI().toString());
+                String name = chosenFile.getName();
+                // System.out.println(name);
+                Calendar date = Calendar.getInstance();
+                date.setTimeInMillis(chosenFile.lastModified());
+                Photo photoToAdd = new Photo(name, imageToAdd, date);
+                checkIfDuplicate(photoToAdd);
+                photos.add(photoToAdd);
+                photoList.setItems(FXCollections.observableArrayList(photos));
+                Helper.writeUsersToDisk(users);
+            }
+        } catch (Exception e) {
+            // e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Album Dashboard Error");
+            alert.setHeaderText("Photo Add Error");
+            alert.setContentText("Error in uploading photo. Photo dimensions maybe too large.");
+            alert.showAndWait();
+            return;
         }
     }
 

@@ -1,6 +1,8 @@
 package model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 
@@ -43,6 +45,36 @@ public class Album implements Serializable {
 		return this.photos;
 	}
 	
+	public String getEarliestPhotoDate() {
+		if ((photos.size() > 0)) {
+			firstPhoto = photos.get(0);
+			LocatDate minPhotoDate = firstPhoto.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate photoDate;
+			for (Photo p : this.getPhotos()) {
+				// get minPhotoDate
+				photoDate = p.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				if(photoDate.isBefore(minPhotoDate)) {
+					minPhotoDate = photoDate;
+				}
+			}
+			return minPhotoDate.toString();
+		}
+	}
+
+	public String getLatestPhotoDate() {
+		if ((photos.size() > 0)) {
+			firstPhoto = photos.get(0);
+			LocatDate maxPhotoDate = firstPhoto.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate photoDate;
+			for (Photo p : this.getPhotos()) {
+				// get maxPhotoDate
+				if(photoDate.isAfter(minPhotoDate)) {
+					maxPhotoDate = photoDate;
+				}
+			}
+			return maxPhotoDate.toString();
+		}
+	}
 	/**
 	 * Returns the number of photos in this album
 	 * @return the number of photos in this album
@@ -65,7 +97,6 @@ public class Album implements Serializable {
 	 */
 	public String toString() {
 		String result = "NAME: " + name + "\nPHOTO COUNT: " + photos.size(); 
-		
 		return result;
 	}
 }

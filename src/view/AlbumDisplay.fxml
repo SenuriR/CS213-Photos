@@ -4,41 +4,32 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.layout.HBox?>
 
-<VBox spacing="10" prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PhotoManagerController">
+<VBox spacing="10" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PhotoManagerController">
    <children>
       <!-- Navigation and Album Info -->
-      <HBox spacing="15">
+      <HBox spacing="15" alignment="CENTER">
+         <children>
+            <Label fx:id="albumName" text="Album: [Album Name]" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+         </children>
+      </HBox>
+      <HBox spacing="15" alignment="CENTER_RIGHT">
          <children>
             <Button text="Back to User Dashboard" onAction="#handleBack" />
-            <Label fx:id="albumName" text="Album: [Album Name]" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
             <Button fx:id="logout" text="Logout" onAction="#handleLogout" />
          </children>
       </HBox>
       <!-- Photo Management -->
       <HBox spacing="5">
          <children>
-            <Button fx:id="addPhoto" text="Add Photo" onAction="#addPhoto" />
-            <Button fx:id="deletePhoto" text="Delete Selected Photo" onAction="#deletePhoto" />
-         </children>
-      </HBox>
-      <!-- Tag Management -->
-      <HBox spacing="5">
-         <children>
-            <Label text="Tags:" />
-            <TextField fx:id="tagField" promptText="Add Tag" />
-            <Button fx:id="addTag" text="Add" onAction="#addTag" />
-            <Button fx:id="removeTag" text="Remove" onAction="#removeSelectedTag" />
-         </children>
-      </HBox>
-      <HBox spacing="5">
-         <children>
-            <Button fx:id="openPhoto" text="Open Photo" onAction="#openSelectedPhoto" />
+            <Button fx:id="openPhoto" text="Open Selected Photo" onAction="#openSelectedPhoto" />
+            <Button fx:id="editPhotoProperties" text="Edit Photo Properites" onAction="#editPhotoProperties" />
+            <Button fx:id="deletePhoto" text="Remove Selected Photo" onAction="#deletePhoto" />
          </children>
       </HBox>
       <!-- MOVE photo-->
       <HBox spacing="5">
          <children>
-            <Label text="Move Photo:" />
+            <Label text="Move Selected Photo:" />
             <ChoiceBox fx:id="albumMove" prefWidth="120.0" prefHeight="25.0"/>
             <Button fx:id="movePhoto" text="Move Photo" onAction="#movePhoto" />
          </children>
@@ -46,9 +37,14 @@
       <!-- COPY photo-->
       <HBox spacing="5">
          <children>
-            <Label text="Copy Photo:" />
+            <Label text="Copy Selected Photo:" />
             <ChoiceBox fx:id="albumCopy" prefWidth="120.0" prefHeight="25.0"/>
             <Button fx:id="copyPhoto" text="Copy Photo" onAction="#copyPhoto" />
+         </children>
+      </HBox>
+      <HBox spacing="5">
+         <children>
+            <Button fx:id="addPhoto" text="Add Photo to Album" onAction="#addPhoto" />
          </children>
       </HBox>
       <!-- Photo List/Display -->

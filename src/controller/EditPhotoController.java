@@ -29,13 +29,15 @@ import model.Album;
 import model.Tag;
 import model.User;
 
-public class PhotoController {
+public class EditPhotoController {
 	@FXML
-    Button backButton, logoutButton, previousButton, nextButton;
+    Button backButton, logoutButton, addTagButton, deleteTagButton, editCaptionButton, editExistingTag;
     @FXML
     ImageView imageView;
     @FXML
     Label photoNameText, captionText, dateTakenText;
+    @FXML
+    TextField tagTypeField, tagValueField, captionField;
     @FXML
     ListView tagsList;
     private Photo photo;
@@ -61,7 +63,26 @@ public class PhotoController {
         this.imageView.setImage(photo.getImage());
     }
     
-   
+    public void handleEditCaption(ActionEvent event) {
+        String caption = captionField.getText();
+        if (caption.isEmpty()) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Edit Caption Confirmation");
+            alert.setHeaderText("Clear Caption");
+            alert.setContentText("Are you sure you want to clear the caption?");
+            alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+            Optional<ButtonType> res = alert.showAndWait();
+            if(res.get().equals(ButtonType.YES)) {
+                captionField.clear();
+            } else {
+                return;
+            }
+        }
+        photo.setCaption(caption);
+        captionField.clear();
+        this.captionText.setText(photo.getCaption());
+        Helper.writeUsersToDisk(users);
+    }
     public void handleBackButton(ActionEvent event) {
         // handle back button -- context of returning to album...
         try {
@@ -94,20 +115,70 @@ public class PhotoController {
             e.printStackTrace();
         }
     }
-    public void handlePreviousButton(ActionEvent event) {
-        if ((indexOfPhoto == 0)) {
-            previousButton.setDisable(true);
-        } else {
-            changePhoto(event, indexOfPhoto-1);
+
+    public void handleEditTag(ActionEvent event) {
+        Tag tagSelected = (Tag) tagsList.getSelectionModel().getSelectedItem();
+        for (Tag t : tags) {
+            if (t.equals(tagSelected)) {
+                tagSelected = t;
+            }
         }
+        if (tagSelected != null) {
+            tags.remove(tagSelected);
+            tagTypeField.setText(tagSelected.getName());
+            tagValueField.setText(tagSelected.getValue());
+        } else {
+            Alert alert0 = new Alert(AlertType.ERROR);
+            alert0.setTitle("Delete Tag Error");
+            alert0.setHeaderText("No Tag Selected");
+            alert0.setContentText("Please select a tag to delete from list below.");
+            alert0.showAndWait();
+            return;
+        }
+        Helper.writeUsersToDisk(users);
+        tagsList.setItems(FXCollections.observableArrayList(tags));
+        tagsList.refresh();
     }
 
-    public void handleNextButton(ActionEvent event) {
-        if ((indexOfPhoto == (album.getPhotos().size()-1))) {
-            nextButton.setDisable(true);
-        } else {
-            changePhoto(event, indexOfPhoto+1);
+    public void handleAddTagButton(ActionEvent event) {
+        String tagName = tagTypeField.getText().trim();
+        String tagValue = tagValueField.getText().trim();
+        Tag tagToAdd = new Tag(tagName, tagValue);
+        for (Tag tag : tags) {
+            if ((tag.getValue().toUpperCase()).equals(tagToAdd.getValue().toUpperCase()) || (tag.getName().toUpperCase().equals("LOCATION") && tagToAdd.getName().toUpperCase().equals("LOCATION"))) {
+                Alert alert0 = new Alert(AlertType.ERROR);
+                alert0.setTitle("Edit Photo Error");
+                alert0.setHeaderText("Duplicate Tag");
+                alert0.setContentText("Tag already exists.");
+                alert0.showAndWait();
+                tagTypeField.clear();
+                tagValueField.clear();
+                return;
+            }
         }
+        tags.add(tagToAdd);
+        Helper.writeUsersToDisk(users);
+        tagsList.setItems(FXCollections.observableArrayList(tags));
+        tagsList.refresh();
+        tagTypeField.clear();
+        tagValueField.clear();
+    }
+
+    public void handleDeleteTagButton(ActionEvent event) {
+        Tag tagToRemove = (Tag) tagsList.getSelectionModel().getSelectedItem();
+        if (tagToRemove != null) {
+            tags.remove(tagToRemove);
+        } else {
+            Alert alert0 = new Alert(AlertType.ERROR);
+            alert0.setTitle("Delete Tag Error");
+            alert0.setHeaderText("No Tag Selected");
+            alert0.setContentText("Please select a tag to delete from list below.");
+            alert0.showAndWait();
+            return;
+        }
+        Helper.writeUsersToDisk(users);
+        tagsList.setItems(FXCollections.observableArrayList(tags));
+        tagsList.refresh();
     }
 
     public void handleLogoutButton(ActionEvent event) {

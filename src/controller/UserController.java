@@ -35,7 +35,7 @@ public class UserController {
 	@FXML
 	private ListView<Album> albumsList;
 	@FXML
-	private Button logOutButton, addAlbumButton, deleteAlbumButton, renameAlbumButton, openAlbumButton, searchPhotosButton, confirmButton, cancelButton;
+	private Button logOutButton, addAlbumButton, deleteAlbumButton, renameAlbumButton, openAlbumButton, searchPhotosButton;
 
 	public void Start(User user, ArrayList<User> users) {
 		this.user = user;
@@ -44,20 +44,7 @@ public class UserController {
 		albumsList.setItems(FXCollections.observableArrayList(userAlbums));
 		usernameLabel.setText("User Dashboard For - " + user.getUsername().toString().toUpperCase());
 	}
-	public void handleCancelButton(ActionEvent event) {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("User Dashboard COnfirmation");
-		alert.setHeaderText("Cancellation confirmation");
-		alert.setContentText("Confirm cancellation?");
-		alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
-		Optional<ButtonType> res = alert.showAndWait();
-		if(res.get().equals(ButtonType.YES)) {
-			albumField.clear();
-		}
-	}
-	public void handleConfirmButton(ActionEvent event) {
-		// something
-	}
+
 	public void handleSearchPhotosButton(ActionEvent event) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SearchPhotos.fxml"));
@@ -79,7 +66,7 @@ public class UserController {
 			Alert alert0 = new Alert(AlertType.ERROR);
 			alert0.setTitle("User Dashboard Error");
 			alert0.setHeaderText("No Album Selected");
-			alert0.setContentText("Please select an album to delete.");
+			alert0.setContentText("Please select an album to open.");
 			alert0.showAndWait();
 			return;
 		}
@@ -121,25 +108,31 @@ public class UserController {
 		dialog.setHeaderText("Rename Album ");
 		dialog.setContentText("Please enter new album name:");
 		Optional<String> result = dialog.showAndWait();
-		String albumName = result.get();
-		Album newAlbum = new Album(albumName);
-		if(albumAlreadyExists(newAlbum)) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Create Album Error");
-			alert.setHeaderText("Album Name Taken");
-			alert.setContentText("Entered album name already exists. Please add a different album name.");
-			alert.showAndWait();
-			return;
+		if (result.isPresent()) {
+			String albumName = result.get();
+			Album newAlbum = new Album(albumName);
+			if(albumAlreadyExists(newAlbum)) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Create Album Error");
+				alert.setHeaderText("Album Name Taken");
+				alert.setContentText("Entered album name already exists. Please add a different album name.");
+				alert.showAndWait();
+				return;
+			} else {
+				albumToEdit.setName(albumName);
+				Alert alert1 = new Alert(AlertType.INFORMATION);
+				alert1.setTitle("User Dashboard Confirmation");
+				alert1.setHeaderText("Album Renamed");
+				alert1.setContentText("Album has been successfully");
+				alert1.showAndWait();
+			}
+			Helper.writeUsersToDisk(users);
+			Start(user, users);
+			// Proceed with using the new album name
 		} else {
-			albumToEdit.setName(albumName);
-			Alert alert1 = new Alert(AlertType.INFORMATION);
-			alert1.setTitle("User Dashboard Confirmation");
-			alert1.setHeaderText("Album Renamed");
-			alert1.setContentText("Album has been successfully");
-			alert1.showAndWait();
+			// User clicked Cancel, handle this scenario accordingly
+			return;
 		}
-		Helper.writeUsersToDisk(users);
-		Start(user, users);
 	}
 	public void handleDeleteAlbumButton(ActionEvent event) {
 		// delete albumToDelete from Album arraylist

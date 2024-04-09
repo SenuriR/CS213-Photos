@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -29,20 +30,12 @@ public class AdminController {
 	@FXML
 	private ListView<User> userListView;
 	@FXML
-	private Button confirmUserAction, cancelUserAction, addUserButton, removeUserButton, showUserButton, logoutButton;
+	private Button addUserButton, removeUserButton, showUserButton, logoutButton;
 
 	public void start(ArrayList<User> users) {
 		// initialization stuff
 		this.users = users;
 
-	}
-	
-	public void handleConfirmAction(ActionEvent event) {
-		// not sure what to do here
-	}
-
-	public void handleCancelAction(ActionEvent event) {
-		// not sure what to do here
 	}
 
 	public void handleAddUser(ActionEvent event) {
@@ -80,6 +73,11 @@ public class AdminController {
 		Helper.writeUsersToDisk(users);
 		usernameField.clear();
 		userListView.getItems().add(newUser);		
+		Alert alert1 = new Alert(AlertType.INFORMATION);
+		alert1.setTitle("Add User");
+		alert1.setHeaderText("Add User Confirmation");
+		alert1.setContentText("User " + newUser.getUsername() + " succesfully created");
+		alert1.showAndWait();
 	}
 
 	public void handleRemoveUser(ActionEvent event) {
