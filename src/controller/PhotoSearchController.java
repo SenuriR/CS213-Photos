@@ -30,6 +30,13 @@ import model.Album;
 import model.Tag;
 import model.Photo;
 
+
+/**
+ * The PhotoSearchController class searches for photos according to date or tag-key value pairs.
+ * Allows user to search for specific photos.
+ * 
+ * @author Isham Khan and Senuri Rupasinghe
+ */
 public class PhotoSearchController {
     @FXML
     ChoiceBox tagChoiceBox;
@@ -47,6 +54,13 @@ public class PhotoSearchController {
     private ArrayList<Tag> tagsToSearch;
     private ArrayList<Photo> photoList;
 
+     /**
+     * Starts the search display view.
+     * UI is built to allow for easy tag or date selection functionality
+     *
+     * @param users  The list of all users.
+     * @param user   The current user viewing the photo.
+     */
     public void Start(ArrayList<User> users, User user){
         this.users = users;
         this.user = user;
@@ -71,6 +85,11 @@ public class PhotoSearchController {
         return new ArrayList<>(hashSet);
     }
 
+    /**
+     * Handles adding tag to tags-to-search list.
+     *
+     * @param event The action event triggered by pressing the edit addTag button.
+     */
     public void handleAddTag(ActionEvent event) {
         Tag tagToAdd = (Tag) tagChoiceBox.getValue();
         if(tagToAdd == null) {
@@ -106,6 +125,12 @@ public class PhotoSearchController {
         
     }
     
+
+    /**
+     * Handles removing tag from tags-to-search list.
+     *
+     * @param event The action event triggered by pressing the edit removeTag button.
+     */
     public void handleRemoveTag(ActionEvent event) {
         Tag tagToRemove = (Tag) tagsListView.getSelectionModel().getSelectedItem();
         if (tagToRemove != null) {
@@ -122,6 +147,11 @@ public class PhotoSearchController {
         tagsListView.refresh();
     }
 
+    /**
+     * Handles searching for photos by date.
+     *
+     * @param event The action event triggered by pressing the edit search by date button.
+     */
     public void handleSearchByDates(ActionEvent event) {
         photoList = new ArrayList<>();
         photoListView.setItems(FXCollections.observableArrayList(photoList));
@@ -139,6 +169,11 @@ public class PhotoSearchController {
         photoListView.setCellFactory(param -> new PhotoListCell());
     }
 
+    /**
+     * Handles searching for photos by tags in tags-to-search list.
+     *
+     * @param event The action event triggered by pressing the edit addTag button.
+     */
     public void handleSearchByTags(ActionEvent event) {
         photoList = new ArrayList<>();
         photoListView.setItems(FXCollections.observableArrayList(photoList));
@@ -223,6 +258,12 @@ public class PhotoSearchController {
         }
     }
 
+
+    /**
+     * Checks if albums already exists for specified user.
+     *
+     * @param newAlbum album requested to add by user.
+     */
     public boolean albumAlreadyExists(Album newAlbum){
         for (Album a : user.getAlbums()) {
             if (a.equals(newAlbum)) {
@@ -232,7 +273,11 @@ public class PhotoSearchController {
         return false;
     }
 
-    // getting an error here, it seems as though we not truly deep copying the photo, just another instance of it
+    /**
+     * Handles creating an album from search results
+     *
+     * @param event The action event triggered by pressing the edit create album from results button.
+     */
     public void handleCreateAlbumFromResults(ActionEvent event) {
         // handle create album from results
         if(photoList != null) {
@@ -279,6 +324,12 @@ public class PhotoSearchController {
         }
     }
 
+     /**
+     * Handles the action of the back button which returns the user to the user display.
+     * This method loads the User Dashboard view and passes along the necessary data.
+     *
+     * @param event The action event triggered by pressing the back button.
+     */
     public void handleBackToAlbumsButton(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/UserDashboard.fxml"));
@@ -294,6 +345,12 @@ public class PhotoSearchController {
         }
     }
 
+    /**
+     * Handles the logout action which returns the user to the login screen.
+     * Current user state is saved before logging out.
+     *
+     * @param event The action event triggered by pressing the logout button.
+     */
     public void handleLogoutButton(ActionEvent event) {
         // handle logout
         try {
