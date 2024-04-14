@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Design refined to support photo search functionality with tag and date filters, and the ability to create an album from search results. -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PhotoSearchController">
+   <top>
+      <VBox prefHeight="240.0" prefWidth="450.0" spacing="10" xmlns:fx="http://javafx.com/fxml">
+         <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+         </padding>
+         <children>
+            <HBox alignment="CENTER">
+               <Text text="Search Photos" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+            </HBox>
+            <HBox spacing="10">
+               <ChoiceBox fx:id="tagChoiceBox" prefWidth="120.0" prefHeight="25.0"/>
+               <Button text="Add Tag" onAction="#handleAddTag" />
+               <Button text="Remove Tag" onAction="#handleRemoveTag" />
+               <Button fx:id="searchTags" text="Search by Tags" onAction="#handleSearchByTags" />
+            </HBox>
+            <ListView fx:id="tagsListView" prefHeight="100.0" />
+            <HBox spacing="10">
+               <DatePicker fx:id="fromDate" promptText="From" />
+               <DatePicker fx:id="toDate" promptText="To" />
+               <Button fx:id="searchDates" text="Search by Dates" onAction="#handleSearchByDates" />
+            </HBox>
+            <Separator />
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+               <Button fx:id="backButton" text="Back" onAction="#handleBackToAlbumsButton" />
+               <Button fx:id="logoutButton" text="Log Out" onAction="#handleLogoutButton" />
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <ListView fx:id="photoListView" prefHeight="200.0" prefWidth="450.0">
+         <!-- This ListView is intended to display the search results. -->
+      </ListView>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER">
+         <Button fx:id="createAlbumBtn" text="Create Album from Results" onAction="#handleCreateAlbumFromResults" />
+         <!-- This button should create a new album from the displayed search results. -->
+      </HBox>
+   </bottom>
+</BorderPane>

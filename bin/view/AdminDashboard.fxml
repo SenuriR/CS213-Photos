@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.HBox?>
+
+
+<VBox spacing="10" alignment="TOP_CENTER" prefHeight="500.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AdminController">
+    <children>
+        <Label text="Administration Dashboard" VBox.vgrow="NEVER">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <HBox spacing="5">
+            <children>
+                <Label text="User Name:" />
+                <TextField fx:id="usernameField" prefWidth="150.0" />
+                <Button fx:id="addUserButton" text="Create User" onAction="#handleAddUser" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="logoutButton" text="Logout" onAction="#handleLogout" />
+            </children>
+        </HBox>
+        <ListView fx:id="userListView" VBox.vgrow="ALWAYS" />
+        <HBox spacing="10" alignment="CENTER">
+            <children>
+                <Button fx:id="removeUserButton" text="Delete User" onAction="#handleRemoveUser" />
+                <Button fx:id="showUsersButton" text="List Users" onAction="#handleShowUsers" />
+            </children>
+        </HBox>
+    </children>
+</VBox>
