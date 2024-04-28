@@ -1,11 +1,14 @@
 package photoapp85.model;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.SparseArray;
+
 import java.util.ArrayList;
 
-public class Album implements Serializable {
+public class Album implements Parcelable {
 
-	private static final long serialVersionUID = 1891567810783724951L;
+	// private static final long serialVersionUID = 1891567810783724951L;
 	private String name;
 	private ArrayList<Photo> photos;
 	
@@ -66,4 +69,42 @@ public class Album implements Serializable {
 		String result = "NAME: " + name + "\nPHOTO COUNT: " + photos.size(); 
 		return result;
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	// write your object's data to the passed-in Parcel
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeString(name);
+		SparseArray<Photo> photoSparceArray = new SparseArray<>();
+		for (int i = 0; i < photos.size(); i++) {
+			photoSparceArray.put(i, photos.get(i));
+		}
+		out.writeSparseArray(photoSparceArray);
+	}
+
+	// this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
+	public static final Parcelable.Creator<Album> CREATOR = new Parcelable.Creator<Album>() {
+		public Album createFromParcel(Parcel in) {
+			return new Album(in);
+		}
+
+		public Album[] newArray(int size) {
+			return new Album[size];
+		}
+	};
+
+	// example constructor that takes a Parcel and gives you an object populated with it's values
+	private Album(Parcel in) {
+		name = in.readString();
+		SparseArray<Photo> photoSparseArray = in.readSparseArray(null);
+		this.photos = new ArrayList<>();
+		for (int i = 0; i < photoSparseArray.size(); i++) {
+			photos.add(photoSparseArray.valueAt(i));
+		}
+	}
+
 }

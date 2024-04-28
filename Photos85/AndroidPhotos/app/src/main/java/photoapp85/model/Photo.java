@@ -1,6 +1,9 @@
 package photoapp85.model;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.SparseArray;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -12,10 +15,10 @@ import java.util.List;
 
 
 
-public class Photo implements Serializable {
+public class Photo implements Parcelable {
 
 
-	private static final long serialVersionUID = 6955723612371190680L;
+	// private static final long serialVersionUID = 6955723612371190680L;
 	private ArrayList<Tag> tags;
 	private String name, caption;
 	private SerializableBitmap bitmap;
@@ -93,5 +96,45 @@ public class Photo implements Serializable {
 	 */
 	public boolean equals(Photo other) {
 		return this.name.equals(other.name);
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeString(name);
+		out.writeString(caption);
+		SparseArray<Tag> tagSparseArray = new SparseArray<>();
+		for (int i = 0; i < tags.size(); i++) {
+			tagSparseArray.put(i, tags.get(i));
+		}
+		out.writeSparseArray(tagSparseArray);
+		out.writeSerializable(bitmap);
+	}
+
+	// this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
+	public static final Parcelable.Creator<Photo> CREATOR = new Parcelable.Creator<Photo>() {
+		public Photo createFromParcel(Parcel in) {
+			return new Photo(in);
+		}
+
+		public Photo[] newArray(int size) {
+			return new Photo[size];
+		}
+	};
+
+	// example constructor that takes a Parcel and gives you an object populated with it's values
+	private Photo(Parcel in) {
+		name = in.readString();
+		caption = in.readString();
+		SparseArray<Tag> tagSparseArray = in.readSparseArray(null);
+		this.tags = new ArrayList<>();
+		for (int i = 0; i < tagSparseArray.size(); i++) {
+			tags.add(tagSparseArray.valueAt(i));
+		}
+		bitmap = (SerializableBitmap) in.readSerializable();
 	}
 }

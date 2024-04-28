@@ -29,9 +29,8 @@ import photoapp85.util.Helper;
 
 public class AlbumActivity extends AppCompatActivity {
     private String path;
-    private int albumPos = 0;
     private ArrayList<Album> albums;
-    private Album selectedAlbum;
+    private Album album;
     private ListView listView;
 
     @Override
@@ -39,12 +38,14 @@ public class AlbumActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
         path = this.getApplicationInfo().dataDir + "/data.dat";
+
+        // unpack intent from MainActivty
         Intent intent = getIntent();
-        Bundle args = intent.getBundleExtra("BUNDLE");
-        ArrayList<Album> albums = (ArrayList<Album>) args.getSerializable("ARRAYLIST");
-        albumPos = intent.getIntExtra("albumPos", 0);
-        selectedAlbum = albums.get(albumPos);
-        PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, selectedAlbum.getPhotos());
+        album = (Album) intent.getParcelableExtra("album");
+        albums = (ArrayList<Album>) intent.getParcelableExtra("albums");
+
+        // initialize adapter and listview
+        PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, album.getPhotos());
         adapter.setNotifyOnChange(true);
         listView = findViewById(R.id.listView);
         listView.setAdapter(adapter);
@@ -78,9 +79,10 @@ public class AlbumActivity extends AppCompatActivity {
 
         // SET UP INTENT TO CALL PHOTOACTIVITY CLASS
         Intent intent = new Intent(this, PhotoActivity.class);
-        intent.putExtra("albumPos", albumPos);
-        intent.putExtra("photoPos", listView.getCheckedItemPosition());
+        intent.putExtra("photo", album.getPhotos().get(listView.getCheckedItemPosition()));
+        intent.putExtra("album", album);
         intent.putExtra("albums", albums);
+        intent.putExtra("photoPos", listView.getCheckedItemPosition());
         startActivity(intent);
     }
 
@@ -187,7 +189,7 @@ public class AlbumActivity extends AppCompatActivity {
         // WE NEED TO GET THE SRC AND DST ALBUM NAMES
         ArrayList<String> namesSrcDstList = new ArrayList<>();
         for (Album album : albums) {
-            if (!album.getName().equals(selectedAlbum.getName())) {
+            if (!album.getName().equals(album.getName())) {
                 namesSrcDstList.add(album.getName()); // so now, namesSrcDst[0] -> src album
             }                
         }

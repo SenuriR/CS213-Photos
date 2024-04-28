@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         File data = new File(path);
 
-        // data.delete(); // KEEP THIS HERE FOR NOW, FOR SOME REASON, WHEN WE'RE NOT STARTING FRESH WE GET AN ERROR
+        data.delete(); // KEEP THIS HERE FOR NOW, FOR SOME REASON, WHEN WE'RE NOT STARTING FRESH WE GET AN ERROR
 
         if (!data.exists() || !data.isFile()) {
             try {
@@ -230,10 +230,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent(this, AlbumActivity.class);
-        Bundle args = new Bundle();
-        args.putSerializable("ARRAYLIST", (Serializable) albums);
-        intent.putExtra("BUNDLE",args);
-        intent.putExtra("album", listView.getCheckedItemPosition());
+        intent.putExtra("album", albums.get(listView.getCheckedItemPosition()));
+        intent.putExtra("albums", albums);
         startActivity(intent);
     }
 

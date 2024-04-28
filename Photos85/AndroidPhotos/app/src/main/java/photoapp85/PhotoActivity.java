@@ -30,7 +30,7 @@ public class PhotoActivity extends AppCompatActivity {
     private ListView listView;
     private ImageView imageView;
     private String path;
-    private int albumPos, photoPos;
+    private int photoPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +39,11 @@ public class PhotoActivity extends AppCompatActivity {
 
         path = this.getApplicationInfo().dataDir + "/data.dat";
         Intent intent = getIntent();
+        albums = (ArrayList<Album>) intent.getParcelableExtra("albums");
+        album = (Album) intent.getParcelableExtra("album");
+        photo = (Photo) intent.getParcelableExtra("photo");
         albums = (ArrayList<Album>) intent.getSerializableExtra("albums");
-        // GET PHOTO INFORMATION
         photoPos = intent.getIntExtra("photoPos", 0);
-        photo = album.getPhotos().get(photoPos);
-        // GET ALBUM INFORMATION
-        albumPos = intent.getIntExtra("albumPos", 0);
-        album = albums.get(albumPos);
 
         // INITIALIZE STUFF FOR LISTVIEW OF PHOTO TAGS
         ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.album_view, photo.getTags());
@@ -65,8 +63,8 @@ public class PhotoActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 Intent intent = new Intent(this, AlbumActivity.class);
+                intent.putExtra("album", albums.get(listView.getCheckedItemPosition()));
                 intent.putExtra("albums", albums);
-                intent.putExtra("albumPosition", albumPos);
                 startActivity(intent);
                 return true;
         }
