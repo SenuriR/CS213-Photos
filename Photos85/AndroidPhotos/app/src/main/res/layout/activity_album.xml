@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="photoapp85.AlbumActivity">
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:choiceMode="singleChoice" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+
+        <Button
+            android:id="@+id/open_button"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="#ffffff"
+            android:onClick="openPhoto"
+            android:text="Open Photo"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/add_button"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="#ffffff"
+            android:onClick="addPhoto"
+            android:text="Add Photo"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/remove_button"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="#ffffff"
+            android:onClick="removePhoto"
+            android:text="Remove Photo"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/move_button"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF"
+            android:layout_marginEnd="8dp"
+            android:onClick="movePhoto"
+            android:text="Move Photo"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+</LinearLayout>

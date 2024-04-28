@@ -1,0 +1,343 @@
+package photoapp85;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+
+import android.text.InputType;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import java.io.File;
+
+import com.example.androidphotos.R;
+import photoapp85.adapter.PhotoAdapter;
+import photoapp85.model.Album;
+import photoapp85.model.Photo;
+import photoapp85.model.Tag;
+import photoapp85.util.Helper;
+
+public class MainActivity extends AppCompatActivity {
+    private ArrayList<Album> albums;
+    private ListView listView;
+    private String path;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // LOAD DATA FROM PREVIOUS SESSION IF IT EXISTS
+        path = this.getApplicationInfo().dataDir + "/data.dat";
+        File data = new File(path);
+        if (!data.exists() || !data.isFile()) {
+            try {
+                data.createNewFile();
+                albums = new ArrayList<Album>();
+                albums.add(new Album("stock"));
+                Helper.saveData((DialogInterface.OnClickListener) this, albums, path);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(path);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            albums = (ArrayList<Album>) objectInputStream.readObject();
+            objectInputStream.close();
+            fileInputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // IMPLEMENT AN ARRAY ADAPTER TO ACCESS DATA FROM DISK
+        listView = findViewById(R.id.listView);
+        ArrayAdapter<Album> adapter = new ArrayAdapter<>(this, R.layout.album_view, albums);
+        listView.setAdapter(adapter);
+        adapter.setNotifyOnChange(true);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listView.setItemChecked(position, true);
+            }
+        });
+        }
+
+    public void removeAlbum(View view) {
+        // GET ADAPTER TO VIEW ALBUMS
+        final ArrayAdapter<Album> adapter = (ArrayAdapter<Album>) listView.getAdapter();
+
+        // IF NO DATA ON DISK
+        if (adapter.getCount() == 0) {
+            new AlertDialog.Builder(this)
+                    .setMessage("No albums to display.")
+                    .setPositiveButton("OK", null)
+                    .show();
+
+            return;
+        }
+
+        // USER HAS SELECTED AN ITEM TO DELETE
+        final int selectedItemPos = listView.getCheckedItemPosition();
+        final Album albumToDelete = adapter.getItem(selectedItemPos);
+
+        // TO VERIFY REMOVE ALBUM
+        AlertDialog.Builder builder = getBuilder(albumToDelete, adapter, selectedItemPos);
+        builder.show();
+    }
+
+    @NonNull
+    private AlertDialog.Builder getBuilder(Album albumToDelete, ArrayAdapter<Album> adapter, int selectedItemPos) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to remove \"" + albumToDelete.getName() + "\"?");
+        builder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        adapter.remove(albumToDelete);
+                        Helper.saveData(adapter, path);
+                        listView.setItemChecked(selectedItemPos, true);
+                    }
+                });
+        builder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        return builder;
+    }
+
+    public void addAlbum(View view) {
+        // GET ADAPTER TO VIEW ALBUMS
+        final ArrayAdapter<Album> adapter = (ArrayAdapter<Album>) listView.getAdapter();
+
+        // FOR USER TO INPUT NEW ALBUM NAME
+        final EditText requestedAlbumName = new EditText(this);
+        requestedAlbumName.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        // TO VERIFY ADD ALBUM
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(requestedAlbumName);
+
+        // USER WANTS TO ADD ALBUM
+        builder.setPositiveButton("Add Album", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String newAlbumName = requestedAlbumName.getText().toString();
+                Album newAlbum = new Album(newAlbumName);
+
+                // VERIFY THAT ALBUM NAME IS NOT TAKEN
+                verifyAlbumNameNotTaken(adapter, builder, newAlbumName);
+
+                // ADD NEWLY CREATED ALBUM TO THE DISK
+                adapter.add(newAlbum);
+                Helper.saveData(adapter, path);
+            }
+        });
+
+        // USER CANCELS ADD ALBUM BUTTON
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // SOFT KEYBOARD
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        dialog.show();
+    }
+
+    public void renameAlbum(View view) {
+        // TO VIEW ALBUMS FROM DISK
+        final ArrayAdapter<Album> adapter = (ArrayAdapter<Album>) listView.getAdapter();
+
+        // GET REQUESTED NEW ALBUM NAME FROM USER INPUT
+        final EditText requestedNewAlbumName = new EditText(this);
+        requestedNewAlbumName.setInputType(InputType.TYPE_CLASS_TEXT);
+        requestedNewAlbumName.setText(adapter.getItem(listView.getCheckedItemPosition()).getName());
+        requestedNewAlbumName.setSelection(requestedNewAlbumName.getText().length());
+
+        // TO VERIFY ALBUM RENAME
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(requestedNewAlbumName);
+
+        // CONFIRM RENAME OF ALBUM
+        builder.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String albumName = requestedNewAlbumName.getText().toString();
+
+                // VERIFY THAT ALBUM NAME NOT TAKEN
+                verifyAlbumNameNotTaken(adapter, builder, albumName);
+
+                // UPDATE ADAPTER - SAVE CHANGES TO DISK
+                adapter.getItem(listView.getCheckedItemPosition()).setName(albumName);
+                adapter.notifyDataSetChanged();
+                Helper.saveData(adapter, path);
+            }
+        });
+
+        // CANCEL RENAME ALBUM ACTION
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // SOFT KEYBOARD
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        dialog.show();
+    }
+
+    public void openAlbum(View view) {
+
+        // IF NO ALBUMS ON DISK
+        if (listView.getAdapter().getCount() == 0) {
+            return;
+        }
+        // INTENT FOR LAUNCHING ALBUM ACTIVITY CLASS
+        Intent intent = new Intent(this, AlbumActivity.class);
+        // TO KEEP TRACK OF WHICH ALBUM IS SELECTED BY USER
+        intent.putExtra("albumPosition", listView.getCheckedItemPosition());
+        // TO TRANSFER ALBUMS REFERENCE TO ALBUM ACTIVITY
+        intent.putExtra("albums", albums);
+        startActivity(intent);
+    }
+
+    public void searchAlbums(View view) {
+        // SET LAYOUT
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        // INITIALIZE OPTIONS FOR LOCATION OR PERSON SEARCH
+        final EditText locationSearchInput = new EditText(this);
+        locationSearchInput.setHint("Location");
+        layout.addView(locationSearchInput);
+        final EditText personSearchInput = new EditText(this);
+        personSearchInput.setHint("Person");
+        layout.addView(personSearchInput);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(layout)
+                .setPositiveButton("Search", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, int which) {
+
+                        // INITIALIZE SEARCH OBJECTS
+                        ArrayList<Photo> searchRes;
+                        String locationSearchString = locationSearchInput.getText().toString();
+                        String personSearchString = personSearchInput.getText().toString();
+                        boolean alreadyAddedToSearch = false;
+
+                        // SEARCH
+                        searchRes = getSearchRes(locationSearchString, personSearchString, alreadyAddedToSearch, albums);
+
+                        // IF NO MATCHES FOR REQUESTED SEARCH
+                        if (searchRes.isEmpty()) {
+                            new AlertDialog.Builder(builder.getContext())
+                                    .setMessage("No search results.")
+                                    .setPositiveButton("Ok", null)
+                                    .show();
+                            return;
+                        } else {
+                            PhotoAdapter photoAdapter = new PhotoAdapter(builder.getContext(), R.layout.photo_view, searchRes);
+                            ListView searchView = new ListView(builder.getContext());
+                            searchView.setAdapter((ListAdapter) photoAdapter);
+
+                            AlertDialog.Builder searchBuilder = new AlertDialog.Builder(builder.getContext());
+                            searchBuilder.setView(searchView)
+                                    .setPositiveButton("Search Again", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            searchAlbums(null);
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            searchBuilder.show();
+                        }
+                    }
+                })
+                // CANCEL SEARCH
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        // SOFT KEYBOARD
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        dialog.show();
+    }
+
+    public ArrayList<Photo> getSearchRes(String locationSearchString, String personSearchString, boolean alreadyAddedToSearch, ArrayList<Album> albums) {
+        ArrayList<Photo> searchRes = new ArrayList<>();
+        for (Album currAlbum : albums) {
+            for (Photo currPhoto : currAlbum.getPhotos()) {
+                for (Tag currTag : currPhoto.getTags()) {
+                    String tagVal = currTag.getValue();
+
+                    if (!tagVal.isEmpty()) {
+                        if (!personSearchString.isEmpty() && tagVal.contains(personSearchString) ||
+                                !locationSearchString.isEmpty() && tagVal.contains(locationSearchString)) {
+                            for (Photo currAddedPhoto : searchRes) {
+                                if (currAddedPhoto.equals(currPhoto)) {
+                                    // SO WE DON'T ADD DUPLICATES
+                                    alreadyAddedToSearch = true;
+                                    break;
+                                }
+                            }
+                            // VALID ADDITION TO SEARCH (NOT A DUPLICATE)
+                            if (!alreadyAddedToSearch) {
+                                searchRes.add(currPhoto);
+                                alreadyAddedToSearch = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return searchRes;
+    }
+
+    // HELPER METHOD
+    public void verifyAlbumNameNotTaken(ArrayAdapter<Album> adapter, AlertDialog.Builder builder, String albumName) {
+        for (int index = 0; index < adapter.getCount(); index++)
+            if (albumName.equals(adapter.getItem(index).getName())) {
+                new AlertDialog.Builder(builder.getContext())
+                        .setMessage("Album " + albumName + " already exists.")
+                        .setPositiveButton("OK", null)
+                        .show();
+                return;
+            }
+    }
+}
