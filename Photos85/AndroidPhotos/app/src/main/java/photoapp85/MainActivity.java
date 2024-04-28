@@ -68,8 +68,10 @@ public class MainActivity extends AppCompatActivity {
         // IMPLEMENT AN ARRAY ADAPTER TO ACCESS DATA FROM DISK
         listView = findViewById(R.id.listView);
         ArrayAdapter<Album> adapter = new ArrayAdapter<>(this, R.layout.album_view, albums);
-        listView.setAdapter(adapter);
         adapter.setNotifyOnChange(true);
+        listView.setAdapter(adapter);
+        listView.setItemChecked(0, true);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
