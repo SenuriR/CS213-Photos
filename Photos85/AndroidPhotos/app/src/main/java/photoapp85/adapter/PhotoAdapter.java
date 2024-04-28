@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 import java.util.List;
 
 import com.example.androidphotos.R;
@@ -28,26 +29,35 @@ public class PhotoAdapter extends ArrayAdapter<Photo> {
     }
 
     // STILL BUGGY FOR SOME REASON
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
-        Photo photo = getItem(position);
+public View getView(int position, View convertView, ViewGroup parent) {
+    ViewHolder holder;
+    Photo photo = getItem(position);
 
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.photo_view, null);
-            holder = new ViewHolder();
-            holder.caption = (TextView) convertView.findViewById(R.id.caption);
-            holder.photo = (ImageView) convertView.findViewById(R.id.photo);
-            convertView.setTag(holder);
-        } else
-            holder = (ViewHolder) convertView.getTag();
-
-        holder.caption.setText(photo.getCaption());
-        holder.photo.setImageBitmap(photo.getBitmap());
-
-        return convertView;
+    if (convertView == null) {
+        // Only inflate and find views when convertView is null
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = inflater.inflate(R.layout.photo_view, parent, false);
+        holder = new ViewHolder();
+        holder.caption = (TextView) convertView.findViewById(R.id.caption);
+        holder.photo = (ImageView) convertView.findViewById(R.id.photo);
+        convertView.setTag(holder);
+    } else {
+        holder = (ViewHolder) convertView.getTag();
     }
+
+    // Set the caption and image only if they are not null
+    if (photo != null) {
+        if (photo.getCaption() != null) {
+            holder.caption.setText(photo.getCaption());
+        }
+        if (photo.getBitmap() != null) {
+            holder.photo.setImageBitmap(photo.getBitmap());
+        }
+    }
+
+    return convertView;
+}
+
 
 
 }
