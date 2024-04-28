@@ -36,8 +36,8 @@ public class Helper {
     }
 
     public static void saveData(ArrayAdapter<Album> arrayAdapter, String path) {
+        // PROCESS: BASICALLY HAVE THE CHANGES DONE TO ADAPTER, THEN REWRITE OVER THE OLD ALBUMS ARRAYLIST
         ArrayList<Album> albums = new ArrayList<Album>();
-
         for (int index = 0; index < arrayAdapter.getCount(); index++)
             albums.add(arrayAdapter.getItem(index));
 

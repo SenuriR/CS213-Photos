@@ -41,43 +41,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        // basic initialization from photos proj
         path = this.getApplicationInfo().dataDir + "/data.dat";
-
         File data = new File(path);
-
         // data.delete(); // KEEP THIS HERE FOR NOW, FOR SOME REASON, WHEN WE'RE NOT STARTING FRESH WE GET AN ERROR
-
         if (!data.exists() || !data.isFile()) {
             try {
                 data.createNewFile();
                 albums = new ArrayList<Album>();
                 albums.add(new Album("stock"));
-
                 Helper.saveData(albums, path);
-                System.out.println("JUST SAVED");
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
         }
-
         try {
             FileInputStream fileInputStream = new FileInputStream(path);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             albums = (ArrayList<Album>) objectInputStream.readObject();
             objectInputStream.close();
             fileInputStream.close();
-            System.out.println("JUST CREATED ALBUMS");
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-
         listView = (ListView) findViewById(R.id.listView);
         ArrayAdapter<Album> adapter = new ArrayAdapter<Album>(this, R.layout.album_view, albums);
         adapter.setNotifyOnChange(true);
         listView.setAdapter(adapter);
         listView.setItemChecked(0, true);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -87,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void removeAlbum(View view) {
+
         // GET ADAPTER TO VIEW ALBUMS
         final ArrayAdapter<Album> adapter = (ArrayAdapter<Album>) listView.getAdapter();
 
@@ -101,18 +93,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // USER HAS SELECTED AN ITEM TO DELETE
-        final int selectedItemPos = listView.getCheckedItemPosition();
-        final Album albumToDelete = adapter.getItem(selectedItemPos);
+        final Album albumToDelete = adapter.getItem(listView.getCheckedItemPosition());
 
         // TO VERIFY REMOVE ALBUM
-        AlertDialog.Builder builder = getBuilder(albumToDelete, adapter, selectedItemPos);
+        AlertDialog.Builder builder = getBuilder(albumToDelete, adapter, listView.getCheckedItemPosition());
         builder.show();
     }
 
     @NonNull
     private AlertDialog.Builder getBuilder(Album albumToDelete, ArrayAdapter<Album> adapter, int selectedItemPos) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to remove \"" + albumToDelete.getName() + "\"?");
+        builder.setMessage("Remove " + albumToDelete.getName() + "?");
         builder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -133,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addAlbum(View view) {
+
         // GET ADAPTER TO VIEW ALBUMS
         final ArrayAdapter<Album> adapter = (ArrayAdapter<Album>) listView.getAdapter();
 
@@ -170,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // SOFT KEYBOARD
         AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
@@ -216,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // SOFT KEYBOARD
         AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
@@ -230,10 +220,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent(this, AlbumActivity.class);
-        Bundle args = new Bundle();
-        args.putSerializable("ARRAYLIST", (Serializable) albums);
-        intent.putExtra("BUNDLE",args);
-        intent.putExtra("album", listView.getCheckedItemPosition());
+        intent.putExtra("albumPos", listView.getCheckedItemPosition());
+        intent.putExtra("albums", albums);
         startActivity(intent);
     }
 

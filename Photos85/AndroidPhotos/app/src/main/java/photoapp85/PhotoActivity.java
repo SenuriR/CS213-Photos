@@ -40,12 +40,11 @@ public class PhotoActivity extends AppCompatActivity {
         path = this.getApplicationInfo().dataDir + "/data.dat";
         Intent intent = getIntent();
         albums = (ArrayList<Album>) intent.getSerializableExtra("albums");
-        // GET PHOTO INFORMATION
-        photoPos = intent.getIntExtra("photoPos", 0);
-        photo = album.getPhotos().get(photoPos);
         // GET ALBUM INFORMATION
         albumPos = intent.getIntExtra("albumPos", 0);
         album = albums.get(albumPos);
+        photoPos = intent.getIntExtra("photoPos", 0);
+        photo = album.getPhotos().get(photoPos);
 
         // INITIALIZE STUFF FOR LISTVIEW OF PHOTO TAGS
         ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.album_view, photo.getTags());
@@ -97,9 +96,13 @@ public class PhotoActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String tagNewValStr = tagValReq.getText().toString();
                         tagNew.setValue(tagNewValStr);
-                        checkAdd(tagNew, adapter, albums, builder);
-                        adapter.add(tagNew);
-                        Helper.saveData(albums, path);
+                        if (!tagExists(tagNew, adapter, albums, builder)) {
+                            adapter.add(tagNew);
+                            Helper.saveData(albums, path);
+                        } else {
+                            return;
+                        }
+
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -114,16 +117,17 @@ public class PhotoActivity extends AppCompatActivity {
         dialog.show();
         Helper.saveData(albums, path);
     }
-    public void checkAdd(Tag tagNew, Adapter adapter, ArrayList<Album> albums, AlertDialog.Builder builder) {
+    public boolean tagExists(Tag tagNew, Adapter adapter, ArrayList<Album> albums, AlertDialog.Builder builder) {
         for (int index = 0; index < adapter.getCount(); index++){
             if (tagNew.equals(adapter.getItem(index))) {
                 new AlertDialog.Builder(builder.getContext())
                         .setMessage("Tag already exists.")
                         .setPositiveButton("OK", null)
                         .show();
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     public void removeTag(View view) {

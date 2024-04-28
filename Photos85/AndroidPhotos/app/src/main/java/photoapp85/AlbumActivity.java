@@ -31,7 +31,7 @@ public class AlbumActivity extends AppCompatActivity {
     private String path;
     private int albumPos = 0;
     private ArrayList<Album> albums;
-    private Album selectedAlbum;
+    private Album currAlbum;
     private ListView listView;
 
     @Override
@@ -40,11 +40,10 @@ public class AlbumActivity extends AppCompatActivity {
         setContentView(R.layout.activity_album);
         path = this.getApplicationInfo().dataDir + "/data.dat";
         Intent intent = getIntent();
-        Bundle args = intent.getBundleExtra("BUNDLE");
-        ArrayList<Album> albums = (ArrayList<Album>) args.getSerializable("ARRAYLIST");
+        albums = (ArrayList<Album>) intent.getSerializableExtra("albums");
         albumPos = intent.getIntExtra("albumPos", 0);
-        selectedAlbum = albums.get(albumPos);
-        PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, selectedAlbum.getPhotos());
+        currAlbum = albums.get(albumPos);
+        PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, currAlbum.getPhotos());
         adapter.setNotifyOnChange(true);
         listView = findViewById(R.id.listView);
         listView.setAdapter(adapter);
@@ -119,29 +118,26 @@ public class AlbumActivity extends AppCompatActivity {
                     Photo photo = new Photo(caption, bitmap);
                     PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();
 
-                    checkPhotoCapAlreadyExists(adapter, photo, caption);
-
-                    // SAVE THE PHOTO TO ADAPTER
-                    adapter.add(photo);
-
-                    // UPDATE DISK
-                    Helper.saveData(albums, path);
+                    if ((adapter.getCount() == 0 )|| (!checkPhotoCapAlreadyExists(adapter, photo, caption))) {
+                        adapter.add(photo);
+                        Helper.saveData(albums, path);
+                    }
                 }
             }
         }
     }
 
-    public void checkPhotoCapAlreadyExists(PhotoAdapter adapter, Photo photo, String caption) {
+    public boolean checkPhotoCapAlreadyExists(PhotoAdapter adapter, Photo photo, String caption) {
         for (int index = 0; index < adapter.getCount(); index++) {
             if (photo.equals(adapter.getItem(index))) {
                 new AlertDialog.Builder(this)
-                        .setMessage("A photo with the caption \"" + caption + "\" already exists in this album.")
+                        .setMessage("A photo with the caption " + caption + " already exists in this album.")
                         .setPositiveButton("OK", null)
                         .show();
-
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     public void removePhoto(View view) {
@@ -153,7 +149,6 @@ public class AlbumActivity extends AppCompatActivity {
                     .setMessage("This selected album does not have any photos.")
                     .setPositiveButton("OK", null)
                     .show();
-
             return;
         }
 
@@ -161,7 +156,7 @@ public class AlbumActivity extends AppCompatActivity {
         final Photo selectedPhoto = adapter.getItem(selectedPhotoPos);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Remove \"" + selectedPhoto.getCaption() + "\"?");
+        builder.setMessage("Remove " + selectedPhoto.getCaption() + " ?");
         builder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -187,7 +182,7 @@ public class AlbumActivity extends AppCompatActivity {
         // WE NEED TO GET THE SRC AND DST ALBUM NAMES
         ArrayList<String> namesSrcDstList = new ArrayList<>();
         for (Album album : albums) {
-            if (!album.getName().equals(selectedAlbum.getName())) {
+            if (!album.getName().equals(currAlbum.getName())) {
                 namesSrcDstList.add(album.getName()); // so now, namesSrcDst[0] -> src album
             }                
         }
