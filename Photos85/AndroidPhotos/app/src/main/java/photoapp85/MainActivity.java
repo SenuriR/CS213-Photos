@@ -41,17 +41,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // LOAD DATA FROM PREVIOUS SESSION IF IT EXISTS
         path = this.getApplicationInfo().dataDir + "/data.dat";
+
         File data = new File(path);
+
+        data.delete(); // KEEP THIS HERE FOR NOW, FOR SOME REASON, WHEN WE'RE NOT STARTING FRESH WE GET AN ERROR
+
         if (!data.exists() || !data.isFile()) {
             try {
                 data.createNewFile();
                 albums = new ArrayList<Album>();
                 albums.add(new Album("stock"));
-                Helper.saveData((DialogInterface.OnClickListener) this, albums, path);
-            } catch (Exception e){
-                e.printStackTrace();
+
+                Helper.saveData(albums, path);
+                System.out.println("JUST SAVED");
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
         }
 
@@ -61,17 +66,16 @@ public class MainActivity extends AppCompatActivity {
             albums = (ArrayList<Album>) objectInputStream.readObject();
             objectInputStream.close();
             fileInputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("JUST CREATED ALBUMS");
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
 
-        // IMPLEMENT AN ARRAY ADAPTER TO ACCESS DATA FROM DISK
-        listView = findViewById(R.id.listView);
-        ArrayAdapter<Album> adapter = new ArrayAdapter<>(this, R.layout.album_view, albums);
+        listView = (ListView) findViewById(R.id.listView);
+        ArrayAdapter<Album> adapter = new ArrayAdapter<Album>(this, R.layout.album_view, albums);
         adapter.setNotifyOnChange(true);
         listView.setAdapter(adapter);
         listView.setItemChecked(0, true);
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -79,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 listView.setItemChecked(position, true);
             }
         });
-        }
+    }
 
     public void removeAlbum(View view) {
         // GET ADAPTER TO VIEW ALBUMS

@@ -92,6 +92,7 @@ public class AlbumActivity extends AppCompatActivity {
         intent.setType("image/*");
 
         startActivityForResult(intent, 42);
+        Helper.saveData(albums, path);
     }
 
     @Override
@@ -121,9 +122,10 @@ public class AlbumActivity extends AppCompatActivity {
 
                     // SAVE THE PHOTO TO ADAPTER
                     adapter.add(photo);
+                    selectedAlbum.getPhotos().add(photo);
 
                     // UPDATE DISK
-                    Helper.saveData((DialogInterface.OnClickListener) this, albums, path);
+                    Helper.saveData(albums, path);
                 }
             }
         }
@@ -133,7 +135,7 @@ public class AlbumActivity extends AppCompatActivity {
         for (int index = 0; index < adapter.getCount(); index++) {
             if (photo.equals(adapter.getItem(index))) {
                 new AlertDialog.Builder(this)
-                        .setMessage("A photo with the caption \"" + caption + "\" already exists in this checkedAlbum.")
+                        .setMessage("A photo with the caption \"" + caption + "\" already exists in this album.")
                         .setPositiveButton("OK", null)
                         .show();
 
@@ -165,7 +167,7 @@ public class AlbumActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         adapter.remove(selectedPhoto);
-                        Helper.saveData(this, albums, path);
+                        Helper.saveData(albums, path);
                         listView.setItemChecked(selectedPhotoPos, true);
                     }
                 });
@@ -177,6 +179,7 @@ public class AlbumActivity extends AppCompatActivity {
                     }
                 });
         builder.show();
+        Helper.saveData(albums, path);
     }
 
     public void movePhoto(View view) {
@@ -221,6 +224,7 @@ public class AlbumActivity extends AppCompatActivity {
                     }
                 });
         builder.show();
+        Helper.saveData(albums, path);
     }
 
     public void checksAndMove(ArrayList<Album> albums, Album dstAlbum, Photo photoToMove, AlertDialog.Builder builder) {
@@ -238,7 +242,7 @@ public class AlbumActivity extends AppCompatActivity {
 
                 }
                 album.getPhotos().add(photoToMove);
-                Helper.saveData((DialogInterface.OnClickListener) this, albums, path);
+                Helper.saveData(albums, path);
             }
         }
     }

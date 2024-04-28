@@ -21,6 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="photoapp85.AlbumActivity"
+            android:parentActivityName="photoapp85.MainActivity" />
+        <activity
+            android:name="photoapp85.PhotoActivity"
+            android:parentActivityName="photoapp85.AlbumActivity" />
     </application>
 
 </manifest>

@@ -99,7 +99,7 @@ public class PhotoActivity extends AppCompatActivity {
                         tagNew.setValue(tagNewValStr);
                         checkAdd(tagNew, adapter, albums, builder);
                         adapter.add(tagNew);
-                        Helper.saveData(this, albums, path);
+                        Helper.saveData(albums, path);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -112,6 +112,7 @@ public class PhotoActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
+        Helper.saveData(albums, path);
     }
     public void checkAdd(Tag tagNew, Adapter adapter, ArrayList<Album> albums, AlertDialog.Builder builder) {
         for (int index = 0; index < adapter.getCount(); index++){
@@ -147,7 +148,7 @@ public class PhotoActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         adapter.remove(selectedTag);
-                        Helper.saveData(this, albums, path);
+                        Helper.saveData(albums, path);
                         listView.setItemChecked(selectedTagPos, true);
                     }
                 });
@@ -161,6 +162,7 @@ public class PhotoActivity extends AppCompatActivity {
                 });
 
         builder.show();
+        Helper.saveData(albums, path);
     }
 
     public void nextPhoto(View view) {
