@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import android.text.InputType;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         File data = new File(path);
 
-        data.delete(); // KEEP THIS HERE FOR NOW, FOR SOME REASON, WHEN WE'RE NOT STARTING FRESH WE GET AN ERROR
+        // data.delete(); // KEEP THIS HERE FOR NOW, FOR SOME REASON, WHEN WE'RE NOT STARTING FRESH WE GET AN ERROR
 
         if (!data.exists() || !data.isFile()) {
             try {
@@ -151,11 +152,13 @@ public class MainActivity extends AppCompatActivity {
                 Album newAlbum = new Album(newAlbumName);
 
                 // VERIFY THAT ALBUM NAME IS NOT TAKEN
-                verifyAlbumNameNotTaken(adapter, builder, newAlbumName);
-
-                // ADD NEWLY CREATED ALBUM TO THE DISK
-                adapter.add(newAlbum);
-                Helper.saveData(adapter, path);
+                if (!albumNameTaken(adapter, builder, newAlbumName)) {
+                    // ADD NEWLY CREATED ALBUM TO THE DISK
+                    adapter.add(newAlbum);
+                    Helper.saveData(adapter, path);
+                } else {
+                    return;
+                }
             }
         });
 
@@ -194,12 +197,14 @@ public class MainActivity extends AppCompatActivity {
                 String albumName = requestedNewAlbumName.getText().toString();
 
                 // VERIFY THAT ALBUM NAME NOT TAKEN
-                verifyAlbumNameNotTaken(adapter, builder, albumName);
-
-                // UPDATE ADAPTER - SAVE CHANGES TO DISK
-                adapter.getItem(listView.getCheckedItemPosition()).setName(albumName);
-                adapter.notifyDataSetChanged();
-                Helper.saveData(adapter, path);
+                if (!albumNameTaken(adapter, builder, albumName)) {
+                    // UPDATE ADAPTER - SAVE CHANGES TO DISK
+                    adapter.getItem(listView.getCheckedItemPosition()).setName(albumName);
+                    adapter.notifyDataSetChanged();
+                    Helper.saveData(adapter, path);
+                } else {
+                    return;
+                }
             }
         });
 
@@ -223,12 +228,12 @@ public class MainActivity extends AppCompatActivity {
         if (listView.getAdapter().getCount() == 0) {
             return;
         }
-        // INTENT FOR LAUNCHING ALBUM ACTIVITY CLASS
+
         Intent intent = new Intent(this, AlbumActivity.class);
-        // TO KEEP TRACK OF WHICH ALBUM IS SELECTED BY USER
-        intent.putExtra("albumPosition", listView.getCheckedItemPosition());
-        // TO TRANSFER ALBUMS REFERENCE TO ALBUM ACTIVITY
-        intent.putExtra("albums", albums);
+        Bundle args = new Bundle();
+        args.putSerializable("ARRAYLIST", (Serializable) albums);
+        intent.putExtra("BUNDLE",args);
+        intent.putExtra("album", listView.getCheckedItemPosition());
         startActivity(intent);
     }
 
@@ -336,14 +341,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // HELPER METHOD
-    public void verifyAlbumNameNotTaken(ArrayAdapter<Album> adapter, AlertDialog.Builder builder, String albumName) {
+    public boolean albumNameTaken(ArrayAdapter<Album> adapter, AlertDialog.Builder builder, String albumName) {
         for (int index = 0; index < adapter.getCount(); index++)
             if (albumName.equals(adapter.getItem(index).getName())) {
                 new AlertDialog.Builder(builder.getContext())
                         .setMessage("Album " + albumName + " already exists.")
                         .setPositiveButton("OK", null)
                         .show();
-                return;
+                return true;
             }
+        return false;
     }
 }

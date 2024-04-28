@@ -43,9 +43,4 @@ public class Helper {
 
         saveData(albums, path);
     }
-
-    public ArrayList<Photo> removeDuplicatePhotos(ArrayList<Photo> photos) {
-        HashSet<Photo> photosNoDuplicates = new HashSet<>(photos);
-        return new ArrayList<>(photosNoDuplicates);
-    }
 }

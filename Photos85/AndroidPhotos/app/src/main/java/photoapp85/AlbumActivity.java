@@ -40,7 +40,8 @@ public class AlbumActivity extends AppCompatActivity {
         setContentView(R.layout.activity_album);
         path = this.getApplicationInfo().dataDir + "/data.dat";
         Intent intent = getIntent();
-        albums = (ArrayList<Album>) intent.getSerializableExtra("albums");
+        Bundle args = intent.getBundleExtra("BUNDLE");
+        ArrayList<Album> albums = (ArrayList<Album>) args.getSerializable("ARRAYLIST");
         albumPos = intent.getIntExtra("albumPos", 0);
         selectedAlbum = albums.get(albumPos);
         PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, selectedAlbum.getPhotos());
@@ -122,7 +123,6 @@ public class AlbumActivity extends AppCompatActivity {
 
                     // SAVE THE PHOTO TO ADAPTER
                     adapter.add(photo);
-                    selectedAlbum.getPhotos().add(photo);
 
                     // UPDATE DISK
                     Helper.saveData(albums, path);
