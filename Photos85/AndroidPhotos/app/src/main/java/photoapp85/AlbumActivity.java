@@ -65,26 +65,20 @@ public class AlbumActivity extends AppCompatActivity {
         ViewCompat.setBackgroundTintList(button, ContextCompat.getColorStateList(this, colorResId));
     }
 
-    // HOME BUTTON
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     public void openPhoto(View view) {
-
-        // IF NO PHOTOS
         if (listView.getAdapter().getCount() == 0) {
             return;
         }
-
-        // SET UP INTENT TO CALL PHOTOACTIVITY CLASS
         Intent intent = new Intent(this, PhotoActivity.class);
         intent.putExtra("albumPos", albumPos);
         intent.putExtra("photoPos", listView.getCheckedItemPosition());
@@ -93,63 +87,46 @@ public class AlbumActivity extends AppCompatActivity {
     }
 
     public void addPhoto(View view) {
-
-        // INTENT TO OPEN IMAGE FILE
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        // WE NEED THIS TO ACCOUNT FOR THE ERROR OF NON-OPENABLE IMAGES
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
-
         startActivityForResult(intent, 42);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
-
-        if (requestCode == 42) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (resultData != null) {
-                    Uri uri = resultData.getData();
-                    Bitmap bitmap = null;
-                    try {
-                        ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
-                        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                        bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                        parcelFileDescriptor.close();
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
-                    }
-
-                    String caption = uri.getLastPathSegment();
-                    Photo photo = new Photo(caption, bitmap);
-                    PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();
-
-                    checkPhotoCapAlreadyExists(adapter, photo, caption);
-
-                    // SAVE THE PHOTO TO ADAPTER
+        if (requestCode == 42 && resultCode == Activity.RESULT_OK && resultData != null) {
+            Uri uri = resultData.getData();
+            try (ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r")) {
+                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+                String caption = uri.getLastPathSegment();
+                Photo photo = new Photo(caption, bitmap);
+                PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();
+                if (!checkPhotoCapAlreadyExists(adapter, photo, caption)) {
                     adapter.add(photo);
-
-                    // UPDATE DISK
-                    Helper.saveData((DialogInterface.OnClickListener) this, albums, path);
+                    Helper.saveData(albums, path);
                 }
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
         }
     }
 
-    public void checkPhotoCapAlreadyExists(PhotoAdapter adapter, Photo photo, String caption) {
-        for (int index = 0; index < adapter.getCount(); index++) {
-            if (photo.equals(adapter.getItem(index))) {
+    private boolean checkPhotoCapAlreadyExists(PhotoAdapter adapter, Photo photo, String caption) {
+        for (int i = 0; i < adapter.getCount(); i++) {
+            if (adapter.getItem(i).equals(photo)) {
                 new AlertDialog.Builder(this)
-                        .setMessage("A photo with the caption \"" + caption + "\" already exists in this checkedAlbum.")
+                        .setMessage("A photo with the caption \"" + caption + "\" already exists.")
                         .setPositiveButton("OK", null)
                         .show();
-
-                return;
+                return true;
             }
         }
+        return false;
     }
+
 
     public void removePhoto(View view) {
         final PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();
