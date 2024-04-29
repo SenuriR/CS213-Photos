@@ -26,13 +26,13 @@ import photoapp85.model.Album;
 import photoapp85.model.Photo;
 import photoapp85.util.Helper;
 
-
 public class AlbumActivity extends AppCompatActivity {
     private String path;
     private int albumPos = 0;
     private ArrayList<Album> albums;
-    private Album selectedAlbum;
+    private Album currAlbum;
     private ListView listView;
+    private Button btnChangeColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +42,8 @@ public class AlbumActivity extends AppCompatActivity {
         Intent intent = getIntent();
         albums = (ArrayList<Album>) intent.getSerializableExtra("albums");
         albumPos = intent.getIntExtra("albumPos", 0);
-        selectedAlbum = albums.get(albumPos);
-        PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, selectedAlbum.getPhotos());
+        currAlbum = albums.get(albumPos);
+        PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, currAlbum.getPhotos());
         adapter.setNotifyOnChange(true);
         listView = findViewById(R.id.listView);
         listView.setAdapter(adapter);
@@ -54,6 +54,15 @@ public class AlbumActivity extends AppCompatActivity {
                 listView.setItemChecked(position, true);
             }
         });
+
+        // Initialize and set button color
+        btnChangeColor = findViewById(R.id.btnChangeColor);
+        changeButtonColor(btnChangeColor, R.color.my_button_color);
+    }
+
+    private void changeButtonColor(Button button, int colorResId) {
+        int color = ContextCompat.getColor(this, colorResId);
+        ViewCompat.setBackgroundTintList(button, ContextCompat.getColorStateList(this, colorResId));
     }
 
     // HOME BUTTON
