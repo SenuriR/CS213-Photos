@@ -93,6 +93,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // USER HAS SELECTED AN ITEM TO DELETE
+        if (listView.getCheckedItemPosition() == -1) {
+            new AlertDialog.Builder(this)
+                    .setMessage("Please select an album to remove.")
+                    .setPositiveButton("OK", null)
+                    .show();
+            return;
+        }
         final Album albumToDelete = adapter.getItem(listView.getCheckedItemPosition());
 
         // TO VERIFY REMOVE ALBUM
@@ -174,6 +181,14 @@ public class MainActivity extends AppCompatActivity {
         // GET REQUESTED NEW ALBUM NAME FROM USER INPUT
         final EditText requestedNewAlbumName = new EditText(this);
         requestedNewAlbumName.setInputType(InputType.TYPE_CLASS_TEXT);
+        if (listView.getCheckedItemPosition() == -1) {
+            // user has not selected a album to delete
+            new AlertDialog.Builder(this)
+                    .setMessage("Please select an album to rename.")
+                    .setPositiveButton("OK", null)
+                    .show();
+            return;
+        }
         requestedNewAlbumName.setText(adapter.getItem(listView.getCheckedItemPosition()).getName());
         requestedNewAlbumName.setSelection(requestedNewAlbumName.getText().length());
 
@@ -216,6 +231,13 @@ public class MainActivity extends AppCompatActivity {
 
         // IF NO ALBUMS ON DISK
         if (listView.getAdapter().getCount() == 0) {
+            return;
+        }
+        if (listView.getCheckedItemPosition() == -1) {
+            new AlertDialog.Builder(this)
+                    .setMessage("Please select an album to open.")
+                    .setPositiveButton("OK", null)
+                    .show();
             return;
         }
 

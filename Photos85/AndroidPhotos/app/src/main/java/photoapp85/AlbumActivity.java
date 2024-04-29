@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -117,28 +118,14 @@ public class AlbumActivity extends AppCompatActivity {
                     String caption = uri.getLastPathSegment();
                     Photo photo = new Photo(caption, bitmap);
                     PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();
-
-                    if ((adapter.getCount() == 0 )|| (!checkPhotoCapAlreadyExists(adapter, photo, caption))) {
-                        adapter.add(photo);
-                        Helper.saveData(albums, path);
-                    }
+                    adapter.add(photo);
+                    Helper.saveData(albums, path);
+                    adapter.notifyDataSetChanged();
                 }
             }
         }
     }
 
-    public boolean checkPhotoCapAlreadyExists(PhotoAdapter adapter, Photo photo, String caption) {
-        for (int index = 0; index < adapter.getCount(); index++) {
-            if (photo.equals(adapter.getItem(index))) {
-                new AlertDialog.Builder(this)
-                        .setMessage("A photo with the caption " + caption + " already exists in this album.")
-                        .setPositiveButton("OK", null)
-                        .show();
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void removePhoto(View view) {
         final PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();
@@ -147,6 +134,14 @@ public class AlbumActivity extends AppCompatActivity {
         if (adapter.getCount() == 0) {
             new AlertDialog.Builder(this)
                     .setMessage("This selected album does not have any photos.")
+                    .setPositiveButton("OK", null)
+                    .show();
+            return;
+        }
+
+        if (listView.getCheckedItemPosition() == -1) {
+            new AlertDialog.Builder(this)
+                    .setMessage("Please select an photo to remove.")
                     .setPositiveButton("OK", null)
                     .show();
             return;
@@ -181,10 +176,11 @@ public class AlbumActivity extends AppCompatActivity {
 
         // WE NEED TO GET THE SRC AND DST ALBUM NAMES
         ArrayList<String> namesSrcDstList = new ArrayList<>();
+        namesSrcDstList.add(currAlbum.getName());  // so now, namesSrcDst[0] -> src album
         for (Album album : albums) {
             if (!album.getName().equals(currAlbum.getName())) {
-                namesSrcDstList.add(album.getName()); // so now, namesSrcDst[0] -> src album
-            }                
+                namesSrcDstList.add(album.getName());
+            }
         }
 
         // convert the namesSrcDst ARRAYLIST into an array, specifically, CharSequence[] of size namesSrcDst.size()
@@ -194,6 +190,14 @@ public class AlbumActivity extends AppCompatActivity {
 
         // designate a spot in the new CharSequence array for the dst album
         final Album dstAlbum = new Album(namesSrcDstArray[0].toString());
+
+        if (listView.getCheckedItemPosition() == -1) {
+            new AlertDialog.Builder(this)
+                    .setMessage("Please select an photo to move.")
+                    .setPositiveButton("OK", null)
+                    .show();
+            return;
+        }
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setSingleChoiceItems(namesSrcDstArray, 0, new DialogInterface.OnClickListener() {
@@ -206,6 +210,7 @@ public class AlbumActivity extends AppCompatActivity {
                 .setPositiveButton("Move", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        listView.deferNotifyDataSetChanged();
                         Photo photoToMove = adapter.getItem(listView.getCheckedItemPosition());
                         // remove photo from curr album
                         adapter.remove(photoToMove);
@@ -220,6 +225,7 @@ public class AlbumActivity extends AppCompatActivity {
                 });
         builder.show();
         Helper.saveData(albums, path);
+        listView.deferNotifyDataSetChanged();
     }
 
     public void checksAndMove(ArrayList<Album> albums, Album dstAlbum, Photo photoToMove, AlertDialog.Builder builder) {
