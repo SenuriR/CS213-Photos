@@ -26,9 +26,10 @@ import photoapp85.model.Album;
 import photoapp85.model.Photo;
 import photoapp85.util.Helper;
 
+
 public class AlbumActivity extends AppCompatActivity {
     private String path;
-    private int albumPos = 0;
+    private int albumPos;
     private ArrayList<Album> albums;
     private Album currAlbum;
     private ListView listView;
@@ -38,29 +39,36 @@ public class AlbumActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
+        initializeActivity();
+    }
+
+    private void initializeActivity() {
         path = this.getApplicationInfo().dataDir + "/data.dat";
         Intent intent = getIntent();
         albums = (ArrayList<Album>) intent.getSerializableExtra("albums");
         albumPos = intent.getIntExtra("albumPos", 0);
         currAlbum = albums.get(albumPos);
+
+        setupListView();
+        setupButton();
+    }
+
+    private void setupListView() {
         PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, currAlbum.getPhotos());
         adapter.setNotifyOnChange(true);
         listView = findViewById(R.id.listView);
         listView.setAdapter(adapter);
         listView.setItemChecked(0, true);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                listView.setItemChecked(position, true);
-            }
-        });
-
-        // Initialize and set button color
-        btnChangeColor = findViewById(R.id.btnChangeColor);
-        changeButtonColor(btnChangeColor, R.color.my_button_color);
+        listView.setOnItemClickListener((parent, view, position, id) -> listView.setItemChecked(position, true));
     }
 
-    private void changeButtonColor(Button button, int colorResId) {
+    private void setupButton() {
+        btnChangeColor = findViewById(R.id.btnChangeColor);
+        changeButtonColor(btnChangeColor, R.color.my_button_color);
+        btnChangeColor.setOnClickListener(v -> changeButtonColor(v, R.color.my_button_color_new));  // Example for changing color on click
+    }
+
+    private void changeButtonColor(View button, int colorResId) {
         int color = ContextCompat.getColor(this, colorResId);
         ViewCompat.setBackgroundTintList(button, ContextCompat.getColorStateList(this, colorResId));
     }
@@ -68,8 +76,7 @@ public class AlbumActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, MainActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -97,20 +104,24 @@ public class AlbumActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
         if (requestCode == 42 && resultCode == Activity.RESULT_OK && resultData != null) {
-            Uri uri = resultData.getData();
-            try (ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r")) {
-                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                String caption = uri.getLastPathSegment();
-                Photo photo = new Photo(caption, bitmap);
-                PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();
-                if (!checkPhotoCapAlreadyExists(adapter, photo, caption)) {
-                    adapter.add(photo);
-                    Helper.saveData(albums, path);
-                }
-            } catch (Exception exception) {
-                exception.printStackTrace();
+            handleImageSelection(resultData);
+        }
+    }
+
+    private void handleImageSelection(Intent resultData) {
+        Uri uri = resultData.getData();
+        try (ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r")) {
+            FileDescriptor fd = pfd.getFileDescriptor();
+            Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fd);
+            String caption = uri.getLastPathSegment();
+            Photo photo = new Photo(caption, bitmap);
+            PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();
+            if (!checkPhotoCapAlreadyExists(adapter, photo, caption)) {
+                adapter.add(photo);
+                Helper.saveData(albums, path);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -126,6 +137,7 @@ public class AlbumActivity extends AppCompatActivity {
         }
         return false;
     }
+
 
 
     public void removePhoto(View view) {
