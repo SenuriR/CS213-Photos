@@ -35,6 +35,8 @@ public class AlbumActivity extends AppCompatActivity {
     private Album currAlbum;
     private ListView listView;
 
+    private static final int REQUEST_CODE_ALBUM_ACTIVITY = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +106,6 @@ public class AlbumActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        System.out.println("IN ON ACTIVITY RESULT");
         super.onActivityResult(requestCode, resultCode, resultData);
 
         if (requestCode == 12) {
@@ -129,18 +130,14 @@ public class AlbumActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                 }
             }
-        }
-        if (requestCode == 2) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (resultData != null) {
-                    albums = (ArrayList<Album>) resultData.getSerializableExtra("albums");
-                    Helper.saveData(albums, path);
-                    // Update your UI or perform any necessary operations with the updated albums list
-                }
-            }
+        } else if (requestCode == REQUEST_CODE_ALBUM_ACTIVITY && resultCode == Activity.RESULT_OK && resultData != null) {
+            albums = (ArrayList<Album>) resultData.getSerializableExtra("albums");
+            currAlbum = albums.get(albumPos);
+            PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, currAlbum.getPhotos());
+            adapter.setNotifyOnChange(true);
+            listView.setAdapter(adapter);
         }
     }
-
 
     public void removePhoto(View view) {
         final PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();

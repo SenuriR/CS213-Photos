@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // basic initialization from photos proj
         path = this.getApplicationInfo().dataDir + "/data.dat";
         File data = new File(path);
-        data.delete(); // KEEP THIS HERE FOR NOW, FOR SOME REASON, WHEN WE'RE NOT STARTING FRESH WE GET AN ERROR
+        // data.delete(); // UNCOMMENT WHEN YOU NEED A HARD RESET - BUT REMEMBER TO COMMENT OUT WHEN YOU WANT TO SAVE DATA TO DISK
         if (!data.exists() || !data.isFile()) {
             try {
                 data.createNewFile();
@@ -78,6 +78,38 @@ public class MainActivity extends AppCompatActivity {
                 listView.setItemChecked(position, true);
             }
         });
+    }
+
+    // HELPER METHOD
+    public boolean albumNameTaken(ArrayAdapter<Album> adapter, AlertDialog.Builder builder, String albumName) {
+        for (int index = 0; index < adapter.getCount(); index++)
+            if (albumName.equals(adapter.getItem(index).getName())) {
+                new AlertDialog.Builder(builder.getContext())
+                        .setMessage("Album " + albumName + " already exists.")
+                        .setPositiveButton("OK", null)
+                        .show();
+                return true;
+            }
+        return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_ALBUM_ACTIVITY) {
+            if (resultCode == Activity.RESULT_OK) {
+                // Retrieve the updated albums list from the result data
+                ArrayList<Album> updatedAlbums = (ArrayList<Album>) data.getSerializableExtra("albums");
+                if (updatedAlbums != null) {
+                    // Update the albums list in the MainActivity
+                    albums.clear();
+                    albums.addAll(updatedAlbums);
+                    // Refresh the ListView or any other UI component to reflect the changes
+                    ((ArrayAdapter<Album>) listView.getAdapter()).notifyDataSetChanged();
+                }
+            }
+        }
     }
 
     public void removeAlbum(View view) {
@@ -290,10 +322,11 @@ public class MainActivity extends AppCompatActivity {
                                     .setMessage("No search results.")
                                     .setPositiveButton("Ok", null)
                                     .show();
-                            return;
                         } else {
-                            PhotoAdapter photoAdapter = new PhotoAdapter(builder.getContext(), R.layout.photo_view, searchRes);
                             ListView searchView = new ListView(builder.getContext());
+
+                            PhotoAdapter photoAdapter = new PhotoAdapter(builder.getContext(), R.layout.photo_view, searchRes);
+
                             searchView.setAdapter((ListAdapter) photoAdapter);
 
                             AlertDialog.Builder searchBuilder = new AlertDialog.Builder(builder.getContext());
@@ -330,14 +363,16 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<Photo> getSearchRes(String locationSearchString, String personSearchString, boolean alreadyAddedToSearch, ArrayList<Album> albums) {
         ArrayList<Photo> searchRes = new ArrayList<>();
+        // we have to search EVERY single album's photo's tag, so it's a lot:
         for (Album currAlbum : albums) {
             for (Photo currPhoto : currAlbum.getPhotos()) {
                 for (Tag currTag : currPhoto.getTags()) {
                     String tagVal = currTag.getValue();
 
-                    if (!tagVal.isEmpty()) {
-                        if (!personSearchString.isEmpty() && tagVal.contains(personSearchString) ||
-                                !locationSearchString.isEmpty() && tagVal.contains(locationSearchString)) {
+                    if (!tagVal.isEmpty()) { // only want to do some comparisons if tagval is an actual val
+                        if (!locationSearchString.isEmpty() && tagVal.contains(locationSearchString) ||
+                                !personSearchString.isEmpty() && tagVal.contains(personSearchString) ) {
+                            // this ^ line should take care of disjunctive and conjunctive
                             for (Photo currAddedPhoto : searchRes) {
                                 if (currAddedPhoto.equals(currPhoto)) {
                                     // SO WE DON'T ADD DUPLICATES
@@ -358,38 +393,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return searchRes;
     }
-
-    // HELPER METHOD
-    public boolean albumNameTaken(ArrayAdapter<Album> adapter, AlertDialog.Builder builder, String albumName) {
-        for (int index = 0; index < adapter.getCount(); index++)
-            if (albumName.equals(adapter.getItem(index).getName())) {
-                new AlertDialog.Builder(builder.getContext())
-                        .setMessage("Album " + albumName + " already exists.")
-                        .setPositiveButton("OK", null)
-                        .show();
-                return true;
-            }
-        return false;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_ALBUM_ACTIVITY) {
-            if (resultCode == Activity.RESULT_OK) {
-                // Retrieve the updated albums list from the result data
-                ArrayList<Album> updatedAlbums = (ArrayList<Album>) data.getSerializableExtra("albums");
-                if (updatedAlbums != null) {
-                    // Update the albums list in the MainActivity
-                    albums.clear();
-                    albums.addAll(updatedAlbums);
-                    // Refresh the ListView or any other UI component to reflect the changes
-                    ((ArrayAdapter<Album>) listView.getAdapter()).notifyDataSetChanged();
-                }
-            }
-        }
-    }
-
-
 }

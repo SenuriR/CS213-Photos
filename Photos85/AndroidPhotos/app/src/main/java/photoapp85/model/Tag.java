@@ -4,11 +4,13 @@ package photoapp85.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Tag implements Parcelable {
+public class Tag implements Serializable {
 
 	private String name, value;
+	private static final long serialVersionUID = 1L;
 
 	public Tag(String name, String value) {
 		this.name = name;
@@ -19,18 +21,6 @@ public class Tag implements Parcelable {
 		name = in.readString();
 		value = in.readString();
 	}
-
-	public static final Creator<Tag> CREATOR = new Creator<Tag>() {
-		@Override
-		public Tag createFromParcel(Parcel in) {
-			return new Tag(in);
-		}
-
-		@Override
-		public Tag[] newArray(int size) {
-			return new Tag[size];
-		}
-	};
 
 	public String getName() {
 		return name;
@@ -66,14 +56,4 @@ public class Tag implements Parcelable {
 		return name + " - " + value;
 	}
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(name);
-		dest.writeString(value);
-	}
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
 }

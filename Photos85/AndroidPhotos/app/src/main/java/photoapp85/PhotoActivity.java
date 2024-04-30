@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -61,6 +62,17 @@ public class PhotoActivity extends AppCompatActivity {
         imageView.setImageBitmap(photo.getBitmap());
     }
 
+    @Override
+    public void onBackPressed() {
+        // Update the tags of the current photo in the album
+        album.getPhotos().get(photoPos).getTags().clear();
+        album.getPhotos().get(photoPos).getTags().addAll(photo.getTags());
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("albums", albums);
+        setResult(Activity.RESULT_OK, resultIntent);
+        super.onBackPressed();
+    }
     // HOME BUTTON
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -109,8 +121,11 @@ public class PhotoActivity extends AppCompatActivity {
                         tagNew.setValue(tagNewValStr);
                         if (!tagExists(tagNew, adapter, albums, builder)) {
                             // Notify the adapter of the data change
-                            adapter.add(tagNew);
+                            photo.getTags().add(tagNew);
+                            adapter.notifyDataSetChanged();
                             Helper.saveData(albums, path);
+                            listView.deferNotifyDataSetChanged();
+                            Toast.makeText(getApplicationContext(), "Tag successfully added. Please quit and re-open app to view changes.", Toast.LENGTH_LONG).show();
                         }
                     }
                 })
@@ -148,7 +163,6 @@ public class PhotoActivity extends AppCompatActivity {
                     .setMessage("This photo does not have any tags.")
                     .setPositiveButton("OK", null)
                     .show();
-
             return;
         }
 
@@ -170,6 +184,7 @@ public class PhotoActivity extends AppCompatActivity {
                         adapter.remove(selectedTag);
                         Helper.saveData(albums, path);
                         listView.setItemChecked(selectedTagPos, true);
+                        Toast.makeText(getApplicationContext(), "Tag successfully removed. Please quit and re-open app to view changes.", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -187,11 +202,13 @@ public class PhotoActivity extends AppCompatActivity {
 
     public void nextPhoto(View view) {
         int lastIndex = album.getPhotoCount() - 1;
+
         if (photoPos < lastIndex) {
             photoPos = photoPos + 1;
         } else {
             photoPos = 0;
         }
+
         photo = album.getPhotos().get(photoPos);
         imageView.setImageBitmap(photo.getBitmap());
         ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.album_view, photo.getTags());
@@ -199,27 +216,19 @@ public class PhotoActivity extends AppCompatActivity {
         listView.setItemChecked(0, true);
     }
     public void previousPhoto(View view) {
+
         if (photoPos > 0) {
             photoPos = photoPos-1;
         } else {
             photoPos = album.getPhotoCount()-1;
         }
+
         // NOW, GET THE PREV PHOTO
         photo = album.getPhotos().get(photoPos);
         imageView.setImageBitmap(photo.getBitmap());
         ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.album_view, photo.getTags());
         listView.setAdapter(adapter);
         listView.setItemChecked(0, true);
-    }
-    @Override
-    public void onBackPressed() {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("albums", albums);
-        startActivityForResult(2, Activity.RESULT_OK, resultIntent);
-        super.onBackPressed();
-    }
-
-    private void startActivityForResult(int i, int resultOk, Intent resultIntent) {
     }
 
 }

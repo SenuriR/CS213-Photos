@@ -79,7 +79,7 @@
             android:layout_weight="1"
             android:background="#ffffff"
             android:onClick="searchAlbums"
-            android:text="Search for Album"
+            android:text="Search for Photo"
             android:textSize="10sp" />
 
     </LinearLayout>
