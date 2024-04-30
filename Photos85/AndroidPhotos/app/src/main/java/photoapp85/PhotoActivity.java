@@ -1,5 +1,6 @@
 package photoapp85;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +32,8 @@ public class PhotoActivity extends AppCompatActivity {
     private ImageView imageView;
     private String path;
     private int albumPos, photoPos;
+
+    private static final int REQUEST_CODE_ALBUM_ACTIVITY = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,18 +76,17 @@ public class PhotoActivity extends AppCompatActivity {
     }
 
     public void addTag(View view) {
-        final ArrayAdapter<Tag> adapter = (ArrayAdapter<Tag>) listView.getAdapter();
+        final ArrayAdapter<Tag> adapter = (ArrayAdapter<Tag>) listView.getAdapter(); // adapter for all tags
 
         final EditText tagValReq = new EditText(this);
         tagValReq.setInputType(InputType.TYPE_CLASS_TEXT);
         tagValReq.setFocusableInTouchMode(true);
         tagValReq.requestFocus();
-
+        // initialize for now
         final Tag tagNew = new Tag("person", "");
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(tagValReq);
-
         builder.setSingleChoiceItems(R.array.tag_types, 0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -95,14 +97,21 @@ public class PhotoActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String tagNewValStr = tagValReq.getText().toString();
-                        tagNew.setValue(tagNewValStr);
-                        if (!tagExists(tagNew, adapter, albums, builder)) {
-                            adapter.add(tagNew);
-                            Helper.saveData(albums, path);
-                        } else {
+                        if (tagNewValStr.isEmpty()) {
+                            // Show an error message if the tag value is empty
+                            new AlertDialog.Builder(builder.getContext())
+                                    .setMessage("Tag value empty. Please add tag value before proceeding.")
+                                    .setPositiveButton("OK", null)
+                                    .show();
                             return;
                         }
 
+                        tagNew.setValue(tagNewValStr);
+                        if (!tagExists(tagNew, adapter, albums, builder)) {
+                            // Notify the adapter of the data change
+                            adapter.add(tagNew);
+                            Helper.saveData(albums, path);
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -115,8 +124,9 @@ public class PhotoActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
-        Helper.saveData(albums, path);
     }
+
+
     public boolean tagExists(Tag tagNew, Adapter adapter, ArrayList<Album> albums, AlertDialog.Builder builder) {
         for (int index = 0; index < adapter.getCount(); index++){
             if (tagNew.equals(adapter.getItem(index))) {
@@ -142,8 +152,14 @@ public class PhotoActivity extends AppCompatActivity {
             return;
         }
 
-
         final int selectedTagPos = listView.getCheckedItemPosition();
+        if (selectedTagPos == -1) {
+            new AlertDialog.Builder(this)
+                    .setMessage("Please select tag to delete")
+                    .setPositiveButton("OK", null)
+                    .show();
+            return;
+        }
         final Tag selectedTag = adapter.getItem(selectedTagPos);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Remove " + selectedTag.toString() + " ?");
@@ -195,4 +211,15 @@ public class PhotoActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         listView.setItemChecked(0, true);
     }
+    @Override
+    public void onBackPressed() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("albums", albums);
+        startActivityForResult(2, Activity.RESULT_OK, resultIntent);
+        super.onBackPressed();
+    }
+
+    private void startActivityForResult(int i, int resultOk, Intent resultIntent) {
+    }
+
 }

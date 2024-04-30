@@ -92,6 +92,6 @@ public class Photo implements Serializable {
 	 * @return true if the photos are equal, false otherwise
 	 */
 	public boolean equals(Photo other) {
-		return this.name.equals(other.name);
+		return this.caption.equals(other.caption);
 	}
 }

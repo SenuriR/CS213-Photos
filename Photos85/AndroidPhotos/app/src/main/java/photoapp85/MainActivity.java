@@ -1,5 +1,6 @@
 package photoapp85;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Album> albums;
     private ListView listView;
     private String path;
+    private static final int REQUEST_CODE_ALBUM_ACTIVITY = 1;
+
 
 
     @Override
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // basic initialization from photos proj
         path = this.getApplicationInfo().dataDir + "/data.dat";
         File data = new File(path);
-        // data.delete(); // KEEP THIS HERE FOR NOW, FOR SOME REASON, WHEN WE'RE NOT STARTING FRESH WE GET AN ERROR
+        data.delete(); // KEEP THIS HERE FOR NOW, FOR SOME REASON, WHEN WE'RE NOT STARTING FRESH WE GET AN ERROR
         if (!data.exists() || !data.isFile()) {
             try {
                 data.createNewFile();
@@ -105,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
         // TO VERIFY REMOVE ALBUM
         AlertDialog.Builder builder = getBuilder(albumToDelete, adapter, listView.getCheckedItemPosition());
         builder.show();
+        for (int i = 0; i < adapter.getCount(); i ++) {
+            listView.setItemChecked(i, false);
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @NonNull
@@ -233,18 +240,20 @@ public class MainActivity extends AppCompatActivity {
         if (listView.getAdapter().getCount() == 0) {
             return;
         }
-        if (listView.getCheckedItemPosition() == -1) {
-            new AlertDialog.Builder(this)
-                    .setMessage("Please select an album to open.")
-                    .setPositiveButton("OK", null)
-                    .show();
-            return;
-        }
 
         Intent intent = new Intent(this, AlbumActivity.class);
-        intent.putExtra("albumPos", listView.getCheckedItemPosition());
-        intent.putExtra("albums", albums);
-        startActivity(intent);
+
+        try {
+            int albumPos = listView.getCheckedItemPosition();
+            albums.get(albumPos);
+            intent.putExtra("albumPos", listView.getCheckedItemPosition());
+            intent.putExtra("albums", albums);
+            startActivityForResult(intent, REQUEST_CODE_ALBUM_ACTIVITY);
+        } catch(Exception e) {
+            intent.putExtra("albumPos", 0);
+            intent.putExtra("albums", albums);
+            startActivityForResult(intent, REQUEST_CODE_ALBUM_ACTIVITY);
+        }
     }
 
     public void searchAlbums(View view) {
@@ -362,4 +371,25 @@ public class MainActivity extends AppCompatActivity {
             }
         return false;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_ALBUM_ACTIVITY) {
+            if (resultCode == Activity.RESULT_OK) {
+                // Retrieve the updated albums list from the result data
+                ArrayList<Album> updatedAlbums = (ArrayList<Album>) data.getSerializableExtra("albums");
+                if (updatedAlbums != null) {
+                    // Update the albums list in the MainActivity
+                    albums.clear();
+                    albums.addAll(updatedAlbums);
+                    // Refresh the ListView or any other UI component to reflect the changes
+                    ((ArrayAdapter<Album>) listView.getAdapter()).notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
+
 }

@@ -43,6 +43,7 @@ public class AlbumActivity extends AppCompatActivity {
         Intent intent = getIntent();
         albums = (ArrayList<Album>) intent.getSerializableExtra("albums");
         albumPos = intent.getIntExtra("albumPos", 0);
+        System.out.println(albumPos);
         currAlbum = albums.get(albumPos);
         PhotoAdapter adapter = new PhotoAdapter(this, R.layout.photo_view, currAlbum.getPhotos());
         adapter.setNotifyOnChange(true);
@@ -79,7 +80,12 @@ public class AlbumActivity extends AppCompatActivity {
         // SET UP INTENT TO CALL PHOTOACTIVITY CLASS
         Intent intent = new Intent(this, PhotoActivity.class);
         intent.putExtra("albumPos", albumPos);
-        intent.putExtra("photoPos", listView.getCheckedItemPosition());
+
+        if (listView.getCheckedItemPosition() == -1) {
+            intent.putExtra("photoPos", 0);
+        } else {
+            intent.putExtra("photoPos", listView.getCheckedItemPosition());
+        }
         intent.putExtra("albums", albums);
         startActivity(intent);
     }
@@ -92,16 +98,16 @@ public class AlbumActivity extends AppCompatActivity {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
 
-        startActivityForResult(intent, 42);
+        startActivityForResult(intent, 12);
         Helper.saveData(albums, path);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-
+        System.out.println("IN ON ACTIVITY RESULT");
         super.onActivityResult(requestCode, resultCode, resultData);
 
-        if (requestCode == 42) {
+        if (requestCode == 12) {
             if (resultCode == Activity.RESULT_OK) {
                 if (resultData != null) {
                     Uri uri = resultData.getData();
@@ -121,6 +127,15 @@ public class AlbumActivity extends AppCompatActivity {
                     adapter.add(photo);
                     Helper.saveData(albums, path);
                     adapter.notifyDataSetChanged();
+                }
+            }
+        }
+        if (requestCode == 2) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (resultData != null) {
+                    albums = (ArrayList<Album>) resultData.getSerializableExtra("albums");
+                    Helper.saveData(albums, path);
+                    // Update your UI or perform any necessary operations with the updated albums list
                 }
             }
         }
@@ -172,49 +187,75 @@ public class AlbumActivity extends AppCompatActivity {
         Helper.saveData(albums, path);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("albums", albums);
+        setResult(Activity.RESULT_OK, resultIntent);
+        super.onBackPressed();
+    }
+
     public void movePhoto(View view) {
 
-        // WE NEED TO GET THE SRC AND DST ALBUM NAMES
-        ArrayList<String> namesSrcDstList = new ArrayList<>();
-        namesSrcDstList.add(currAlbum.getName());  // so now, namesSrcDst[0] -> src album
+        ArrayList<String> lsOfDstToChooseFrm = new ArrayList<>();
         for (Album album : albums) {
             if (!album.getName().equals(currAlbum.getName())) {
-                namesSrcDstList.add(album.getName());
+                lsOfDstToChooseFrm.add(album.getName()); // contains all the NAMES of the albums that are not currAlbum
             }
         }
 
-        // convert the namesSrcDst ARRAYLIST into an array, specifically, CharSequence[] of size namesSrcDst.size()
-        final CharSequence[] namesSrcDstArray = namesSrcDstList.toArray(new CharSequence[namesSrcDstList.size()]);
-
         final PhotoAdapter adapter = (PhotoAdapter) listView.getAdapter();
+        // convert the namesSrcDst ARRAYLIST into an array, specifically, CharSequence[] of size namesSrcDst.size()
+        final String[] lsOfDstToChooseFrmArray = lsOfDstToChooseFrm.toArray(new String[lsOfDstToChooseFrm.size()]);
 
-        // designate a spot in the new CharSequence array for the dst album
-        final Album dstAlbum = new Album(namesSrcDstArray[0].toString());
-
+        Photo photoToMove;
         if (listView.getCheckedItemPosition() == -1) {
             new AlertDialog.Builder(this)
                     .setMessage("Please select an photo to move.")
                     .setPositiveButton("OK", null)
                     .show();
             return;
+        } else {
+            photoToMove = adapter.getItem(listView.getCheckedItemPosition());
+            System.out.println(photoToMove.getCaption());
         }
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setSingleChoiceItems(namesSrcDstArray, 0, new DialogInterface.OnClickListener() {
+        final Album dstAlbum = new Album(lsOfDstToChooseFrmArray[0].toString()); // default dstAlbum is first item in list
+        builder.setSingleChoiceItems(lsOfDstToChooseFrmArray, 0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // update selected dst name
-                        dstAlbum.setName(namesSrcDstArray[which].toString());
+                        dstAlbum.setName(lsOfDstToChooseFrmArray[which].toString());
                     }
                 })
                 .setPositiveButton("Move", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listView.deferNotifyDataSetChanged();
-                        Photo photoToMove = adapter.getItem(listView.getCheckedItemPosition());
-                        // remove photo from curr album
+                        // remove photo from currAlbum
                         adapter.remove(photoToMove);
-                        checksAndMove(albums, dstAlbum, photoToMove, builder);
+                        for (Album album : albums) {
+                            if (album.getName().equals(dstAlbum.getName())) {
+                                for (Photo photo : album.getPhotos()) {
+                                    System.out.println(photo.getCaption());
+                                    System.out.println(photoToMove.getCaption());
+                                    if (photo.equals(photoToMove)) {
+                                        new AlertDialog.Builder(builder.getContext())
+                                                .setMessage("Caption " + photoToMove.getCaption() + " already exists in " + album.getName() + " .")
+                                                .setPositiveButton("OK", null)
+                                                .show();
+
+                                        return;
+                                    }
+
+                                }
+                                // we didn't find a matching photo caption
+                                album.getPhotos().add(photoToMove);
+                                Helper.saveData(albums, path);
+                                listView.deferNotifyDataSetChanged();
+                            }
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -226,25 +267,5 @@ public class AlbumActivity extends AppCompatActivity {
         builder.show();
         Helper.saveData(albums, path);
         listView.deferNotifyDataSetChanged();
-    }
-
-    public void checksAndMove(ArrayList<Album> albums, Album dstAlbum, Photo photoToMove, AlertDialog.Builder builder) {
-        for (Album album : albums) {
-            if (album.getName().equals(dstAlbum.getName())) {
-                for (Photo photo : album.getPhotos()) {
-                    if (photo.equals(photoToMove)) {
-                        new AlertDialog.Builder(builder.getContext())
-                                .setMessage("Caption " + photoToMove.getCaption() + " already exists in " + album.getName() + " .")
-                                .setPositiveButton("OK", null)
-                                .show();
-
-                        return;
-                    }
-
-                }
-                album.getPhotos().add(photoToMove);
-                Helper.saveData(albums, path);
-            }
-        }
     }
 }
